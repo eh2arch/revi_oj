@@ -7,8 +7,14 @@ class User
 
   ## Database authenticatable
   field :email,              type: String, default: ""
+  field :username,           type: String, default: ""
   field :encrypted_password, type: String, default: ""
-
+  field :full_name,          type: String, default: ""
+  field :phone,              type: String, default: ""
+  field :birthdate,          type: Date, default: ""
+  field :role,               type: Boolean, default: false
+  # The admin can use this field to disallow the user to login
+  field :disable,            type: Boolean, default: false
   ## Recoverable
   field :reset_password_token,   type: String
   field :reset_password_sent_at, type: Time

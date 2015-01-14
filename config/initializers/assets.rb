@@ -1,0 +1,1 @@
+Rails.application.config.assets.precompile += %w( devise_register_footer.js )
