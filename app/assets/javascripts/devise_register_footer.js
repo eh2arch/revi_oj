@@ -16,7 +16,7 @@
 //= require joinable
 //= require xenon-api
 //= require xenon-toggles
-//= require ./jquery-validate/jquery.validate.min
+//= require jquery.validate.min
 //= require ./toastr/toastr.min
 //= require xenon-custom
 

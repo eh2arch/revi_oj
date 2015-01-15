@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>CodecrackerV4</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-
-<%= yield %>
-
-</body>
+<html lang="en">
+	<head>
+		<%= render partial: 'layouts/head' %>
+	</head>
+	<body class="page-body">
+		<%= render partial: 'layouts/nav' %>
+		<div class="page-container">
+			<div class="main-content">
+				<%#= render partial: 'layouts/header' %>
+			</div>
+			<div class="main-content">
+			<%= javascript_include_tag 'application_script.js' %>
+				<%= yield %>
+				<%#= render partial: 'layouts/footer' %>
+			</div>
+		</div>
+	</body>
 </html>
+
+<%= javascript_include_tag "application_home_footer.js" %>
+<%= javascript_include_tag "page-loader.js" %>

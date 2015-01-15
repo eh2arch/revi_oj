@@ -1,10 +1,10 @@
 				<h2><% @title = 'Sign Up Page | CodeCracker' %></h2>
 
-				<%= form_for(resource, as: resource_name, url: registration_path(resource_name), :html => { role: "form", id: "login", class: "login-form fade-in-effect" }) do |f| %>
+				<%= form_for(resource, as: resource_name, url: registration_path(resource_name), :html => { role: "form", id: "login", class: "login-form fade-in-effect", novalidate: "novalidate" }) do |f| %>
 				  <%= devise_error_messages! %>
 
                     <div class="login-header">
-                        <a href="../../dashboard/variant-1/index.html" class="logo"> <img src="../../assets/images/logo%402x.png" alt="" width="80" /> <span>log in</span> </a>
+                        <a href="#" class="logo"> <img src="../../assets/images/logo%402x.png" alt="" width="80" /> <span>log in</span> </a>
                         <p>Dear user, log in to access the admin area!</p>
                     </div>
                     <div class="form-group">
@@ -13,15 +13,19 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="user_username">User Name</label>
-	                    <%= f.text_field :username, autocomplete: "off", class: "form-control input-dark", :'data-mask' => '[a-zA-Z0-1\.]+', :'data-is-regex' => 'true' %>
+	                    <%= f.text_field :username, autocomplete: "off", class: "form-control input-dark", :'data-mask' => '[a-zA-Z0-1\.]+', :'data-is-regex' => 'true'%>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="user_email">Email</label>
+	                    <%= f.email_field :email, autofocus: true, autocomplete: "off", class: "form-control input-dark"%>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="user_password">Password</label>
-						<%= f.password_field :password, autocomplete: "off", class: "form-control input-dark" %>
+						<%= f.password_field :password, autocomplete: "off", class: "form-control input-dark"%>
 					</div>
                     <div class="form-group">
                         <label class="control-label" for="user_password_confirmation">Password Confirmation</label>
-	                    <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control input-dark' %>
+	                    <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control input-dark'%>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-dark btn-block text-left"> <i class="fa-caret-square-o-right"></i> Complete Registration

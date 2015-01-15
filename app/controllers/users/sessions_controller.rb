@@ -14,7 +14,11 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def failure
-    user = User.find_by_email(session['user_auth'][:email])
+    begin
+      user = User.find(email: session['user_auth'][:email])
+    rescue Mongoid::Errors::DocumentNotFound
+      user = nil
+    end
     message = I18n.t 'devise.failure.invalid'
     if user =! nil || user.active_for_authentication?
       flash[:error]= message unless request.xhr?

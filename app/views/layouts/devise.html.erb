@@ -9,6 +9,18 @@
     <div class="login-container">
         <div class="row">
             <div class="col-sm-6">
+                <script type="text/javascript">
+                    jQuery(document).ready(function($) {
+                        // Reveal Login form
+                        setTimeout(function() {
+                            $(".fade-in-effect").addClass('in');
+                        }, 1);
+
+
+                        // Set Form focus
+                        $("form#login .form-group:has(.form-control):first .form-control").focus();
+                    });
+                </script>
                 <div class="errors-container"> </div>
                     <%= yield %>
 <!--                 <div class="external-login">
@@ -18,6 +30,7 @@
             </div>
         </div>
     </div>
+    <%= javascript_include_tag "devise_register_footer.js" %>
 </body>
 
 </html>
