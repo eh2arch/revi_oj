@@ -4,7 +4,7 @@ CodecrackerV4::Application.routes.draw do
 
   devise_for :users, :controllers => {:sessions => 'users/sessions', :registrations => 'users/registrations'}
 
-  root :to => 'application#home'
+  root :to => 'application#contests'
 
   # You can have the root of your site routed with "root"
 
@@ -56,5 +56,5 @@ CodecrackerV4::Application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
-  match ':controller(/:action(/:id))', :via => [:get, :post]
+  # match ':controller(/:action(/:id))', :via => [:get, :post]
 end

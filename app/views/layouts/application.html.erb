@@ -7,16 +7,38 @@
 		<%= render partial: 'layouts/nav' %>
 		<div class="page-container">
 			<div class="main-content">
-				<%#= render partial: 'layouts/header' %>
-			</div>
-			<div class="main-content">
-			<%= javascript_include_tag 'application_script.js' %>
+				<%= render partial: 'layouts/header' %>
 				<%= yield %>
-				<%#= render partial: 'layouts/footer' %>
 			</div>
+			<%= javascript_include_tag 'application_footer.js' %>
 		</div>
+		<div class="page-loading-overlay">
+		    <div class="loader-2"></div>
+		</div>
+		<% if @contest_page %>
+			<%= stylesheet_link_tag "datatables/dataTables.bootstrap.css" %>
+		<% end %>
+		<%= javascript_include_tag "application_footer.js" %>
+		<% if @contest_page %>
+			<%= javascript_include_tag "datatables/js/jquery.dataTables.min.js" %>
+			<%= javascript_include_tag "datatables/dataTables.bootstrap.js" %>
+			<%= javascript_include_tag "datatables/yadcf/jquery.dataTables.yadcf.js" %>
+			<%= javascript_include_tag "datatables/tabletools/dataTables.tableTools.min.js" %>
+			<%= javascript_include_tag "jquery.timeago.js" %>
+			<script>
+				jQuery(document).ready(function() {
+				  jQuery.timeago.settings.allowFuture = true;
+				  jQuery(".timeago").timeago();
+				});
+			</script>
+            <style>
+                .contests-table .name {
+                    display: block;
+                    font-size: 14px;
+                    color: #2c2e2f;
+                    font-weight: 700;
+                }
+            </style>
+		<% end %>
 	</body>
 </html>
-
-<%= javascript_include_tag "application_home_footer.js" %>
-<%= javascript_include_tag "page-loader.js" %>

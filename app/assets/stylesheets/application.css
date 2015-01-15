@@ -11,6 +11,7 @@
  *= require_self
  *= require ./fonts/linecons/css/linecons
  *= require ./fonts/fontawesome/css/font-awesome.min
+ *= require ./fonts/entypo/css/entypo
  *= require bootstrap
  *= require xenon-core
  *= require xenon-forms

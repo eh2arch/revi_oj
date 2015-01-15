@@ -15,7 +15,19 @@ class ApplicationController < ActionController::Base
 
   before_filter :authenticate_user!
 
-  def home
+  def contests
+    @main_content_page = true
+    @contest_page = true
+    @title = "Contests"
+    @description = "See the oncoming, upcoming and past contests"
+    @clarifications = clarifications
+    @upcoming_contests = Contest.where({ start_time: { :$gt => DateTime.now } })
+    @ongoing_contests = Contest.where({ start_time: { :$lte => DateTime.now }, end_time: { :$gte => DateTime.now } })
+    @past_contests = Contest.where({ end_time: { :$lt => DateTime.now } })
+  end
+
+  def clarifications
+    return nil
   end
 
 end

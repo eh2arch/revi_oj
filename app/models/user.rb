@@ -29,6 +29,12 @@ class User
   field :current_sign_in_ip, type: String
   field :last_sign_in_ip,    type: String
 
+  # embedded_in :contest
+
+  has_and_belongs_to_many :contests
+  belongs_to :creator
+  belongs_to :author
+
   ## Confirmable
   # field :confirmation_token,   type: String
   # field :confirmed_at,         type: Time
