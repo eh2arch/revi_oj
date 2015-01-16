@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<%= render partial: 'layouts/head' %>
+	</head>
+	<body class="page-body page-error-env">
+		<%= yield %>
+		<%= javascript_include_tag 'application_footer.js' %>
+		<div class="page-loading-overlay">
+		    <div class="loader-2"></div>
+		</div>
+	</body>
+</html>
