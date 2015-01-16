@@ -1,10 +1,10 @@
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
-                        <% if @ongoing_contests.count > 0 %>
+                        <% if @problems_hash[:data].count > 0 %>
                             <div class="row">
-                                <div class="panel panel-color panel-success">
+                                <div class="panel panel-color panel-<%= problems[:panel_color] %>">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Ongoing Contests</h3>
+                                        <h3 class="panel-title"><%= problems[:name] %></h3>
                                         <div class="panel-options">
                                             <a href="#" data-toggle="remove">&times;</a>
                                         </div>
@@ -14,7 +14,7 @@
                                         <div class="col-md-12">
                                         <script type="text/javascript">
                                             jQuery(document).ready(function($) {
-                                                $("#ongoing_contests").dataTable({
+                                                $("#<%= problems[:name].split(' ')[0].downcase %>").dataTable({
                                                     aLengthMenu: [
                                                         [10, 25, 50, 100, -1],
                                                         [10, 25, 50, 100, "All"]
@@ -25,149 +25,33 @@
                                             });
                                         </script>
 
-                                        <table id="ongoing_contests" class="table table-hover contests-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                        <table id="<%= problems[:name].split(' ')[0].downcase %>" class="table table-hover problems-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Start Time</th>
-                                                    <th>End Time</th>
+                                                    <th>Problem Code</th>
+                                                    <th>Total Submissions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% @ongoing_contests.each do |ongoing_contest| %>
+                                                <% problems[:data].each do |problem| %>
                                                     <tr>
                                                         <td class="user-name">
-                                                            <a href="#" class="name"><%=ongoing_contest[:name]%></a>
+                                                            <a href="#" class="name"><%=problem[:name]%></a>
                                                             <!-- <span>Administrator</span> -->
                                                         </td>
-                                                        <td class="timeago" title="<%=ongoing_contest[:start_time].to_time.iso8601%>">
-                                                            <%=ongoing_contest[:start_time].to_time.iso8601%>
+                                                        <td class="user-name">
+                                                            <a href="#" class="name"><%=problem[:pcode]%></a>
+                                                            <!-- <span>Administrator</span> -->
                                                         </td>
-                                                        <td class="timeago" title="<%=ongoing_contest[:end_time].to_time.iso8601%>">
-                                                            <%=ongoing_contest[:end_time].to_time.iso8601%>
+                                                        <td class="timeago" title="<%=problem[:submissions_count]%>">
+                                                            <%=problem[:submissions_count]%>
                                                         </td>
                                                     </tr>
                                                 <% end %>
                                             </tbody>
                                         </table>
                                             <div class="row">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <% end %>
-                        <% if @upcoming_contests.count > 0 %>
-                            <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
-                                <div class="row">
-                                    <div class="panel panel-color panel-info">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">Upcoming Contests</h3>
-                                            <div class="panel-options">
-                                                <a href="#" data-toggle="remove">&times;</a>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                            <script type="text/javascript">
-                                                jQuery(document).ready(function($) {
-                                                    $("#upcoming_contests").dataTable({
-                                                        aLengthMenu: [
-                                                            [10, 25, 50, 100, -1],
-                                                            [10, 25, 50, 100, "All"]
-                                                        ],
-                                                        "bLengthChange" : false, //thought this line could hide the LengthMenu
-                                                        "bInfo":false
-                                                    });
-                                                });
-                                            </script>
-                                            <table id="upcoming_contests" class="table table-hover contests-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Start Time</th>
-                                                        <th>End Time</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <% @upcoming_contests.each do |upcoming_contest| %>
-                                                        <tr>
-                                                            <td class="user-name">
-                                                                <a href="#" class="name"><%=upcoming_contest[:name]%></a>
-                                                                <!-- <span>Administrator</span> -->
-                                                            </td>
-                                                            <td class="timeago" title="<%=upcoming_contest[:start_time].to_time.iso8601%>">
-                                                                <%=upcoming_contest[:start_time].to_time.iso8601%>
-                                                            </td>
-                                                            <td class="timeago" title="<%=upcoming_contest[:end_time].to_time.iso8601%>">
-                                                                <%=upcoming_contest[:end_time].to_time.iso8601%>
-                                                            </td>
-                                                        </tr>
-                                                    <% end %>
-                                                </tbody>
-                                            </table>
-                                                <div class="row">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <% end %>
-                        <% if @past_contests.count > 0 %>
-                            <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
-                                <div class="row">
-                                    <div class="panel panel-color panel-danger">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">Past Contests</h3>
-                                            <div class="panel-options">
-                                                <a href="#" data-toggle="remove">&times;</a>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                            <script type="text/javascript">
-                                                jQuery(document).ready(function($) {
-                                                    $("#past_contests").dataTable({
-                                                        aLengthMenu: [
-                                                            [10, 25, 50, 100, -1],
-                                                            [10, 25, 50, 100, "All"]
-                                                        ],
-                                                        "bLengthChange" : false, //thought this line could hide the LengthMenu
-                                                        "bInfo":false
-                                                    });
-                                                });
-                                            </script>
-
-                                            <table id="past_contests" class="table table-hover contests-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Start Time</th>
-                                                        <th>End Time</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <% @past_contests.each do |past_contest| %>
-                                                        <tr>
-                                                            <td class="user-name">
-                                                                <a href="#" class="name"><%=past_contest[:name]%></a>
-                                                                <!-- <span>Administrator</span> -->
-                                                            </td>
-                                                            <td class="timeago" title="<%=past_contest[:start_time].to_time.iso8601%>">
-                                                                <%=past_contest[:start_time].to_time.iso8601%>
-                                                            </td>
-                                                            <td class="timeago" title="<%=past_contest[:end_time].to_time.iso8601%>">
-                                                                <%=past_contest[:end_time].to_time.iso8601%>
-                                                            </td>
-                                                        </tr>
-                                                    <% end %>
-                                                </tbody>
-                                            </table>
-                                                <div class="row">
-                                                </div>
                                             </div>
                                         </div>
                                     </div>

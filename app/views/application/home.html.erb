@@ -1,0 +1,82 @@
+                <div class="row">
+                    <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
+                        <% @contests_array.each do |contests| %>
+                            <% if contests[:data].count > 0 %>
+                                <div class="row">
+                                    <div class="panel panel-color panel-<%= contests[:panel_color] %>">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title"><%= contests[:name] %></h3>
+                                            <div class="panel-options">
+                                                <a href="#" data-toggle="remove">&times;</a>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                            <script type="text/javascript">
+                                                jQuery(document).ready(function($) {
+                                                    $("#<%= contests[:name].split(' ')[0].downcase %>").dataTable({
+                                                        aLengthMenu: [
+                                                            [10, 25, 50, 100, -1],
+                                                            [10, 25, 50, 100, "All"]
+                                                        ],
+                                                        "bLengthChange" : false, //thought this line could hide the LengthMenu
+                                                        "bInfo":false
+                                                    });
+                                                });
+                                            </script>
+
+                                            <table id="<%= contests[:name].split(' ')[0].downcase %>" class="table table-hover contests-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Contest Code</th>
+                                                        <th>Start Time</th>
+                                                        <th>End Time</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% contests[:data].each do |contest| %>
+                                                        <tr>
+                                                            <td class="user-name">
+                                                                <%= link_to contest[:name], { action: "contests", ccode: contest[:ccode] }, class: "name" %>
+                                                                <!-- <span>Administrator</span> -->
+                                                            </td>
+                                                            <td class="user-name">
+                                                                <a href="#" class="name"><%=contest[:ccode]%></a>
+                                                                <!-- <span>Administrator</span> -->
+                                                            </td>
+                                                            <td class="timeago" title="<%=contest[:start_time].to_time.iso8601%>">
+                                                                <%=contest[:start_time].to_time.iso8601%>
+                                                            </td>
+                                                            <td class="timeago" title="<%=contest[:end_time].to_time.iso8601%>">
+                                                                <%=contest[:end_time].to_time.iso8601%>
+                                                            </td>
+                                                        </tr>
+                                                    <% end %>
+                                                </tbody>
+                                            </table>
+                                                <div class="row">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                    <div class="col-md-4" style="display:<%= @clarifications.nil? ? 'none' : '' %>">
+                        <div class="panel panel-color panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Clarifications</h3>
+                                <div class="panel-options">
+                                    <a href="#" data-toggle="remove">&times;</a>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <p>Fat far.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
