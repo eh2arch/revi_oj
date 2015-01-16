@@ -25,7 +25,7 @@
                                                 });
                                             </script>
 
-                                            <table id="<%= @problems_hash[:ccode] %>" class="table table-hover @problems_hash-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                            <table id="<%= @problems_hash[:ccode] %>" class="table table-hover data-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th>Name</th>
@@ -44,7 +44,7 @@
                                                                 <a href="#" class="name"><%=problem[:pcode]%></a>
                                                                 <!-- <span>Administrator</span> -->
                                                             </td>
-                                                            <td class="timeago" title="<%=problem[:submissions_count]%>">
+                                                            <td class="" title="<%=problem[:submissions_count]%>">
                                                                 <%=problem[:submissions_count]%>
                                                             </td>
                                                         </tr>
