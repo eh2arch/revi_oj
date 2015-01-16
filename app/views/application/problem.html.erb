@@ -1,7 +1,20 @@
-<div class="panel panel-default">
-    <div class="panel-body">
-    	<h3><strong> Problem Statement </strong></h3>
-    	<p></p>
-        <h4><%=@problem_text.html_safe%></h4>
-    </div>
-</div>
+				<div class="panel panel-default">
+				    <div class="panel-body">
+				    	<h3><strong> Problem Statement </strong></h3>
+				    	<p></p>
+				        <h4><%=@problem_text.html_safe%></h4>
+				    </div>
+				</div>
+				<h3 class="text-gray">
+				Submit Code <br> <small class="text-muted">Simple, beautiful editor</small> </h3>
+				 <div class="row">
+				    <div class="col-md-12" id="code">
+				    </div>
+				</div>
+				<script>
+				  var editor = new CodeMirror(document.getElementById("code"), {
+				    lineNumbers: true,
+				    extraKeys: {"Ctrl-Space": "autocomplete"},
+				    mode: {name: "javascript", globalVars: true}
+				  });
+				</script>
