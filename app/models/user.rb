@@ -31,9 +31,9 @@ class User
 
   # embedded_in :contest
 
+  has_many :submissions
   has_and_belongs_to_many :contests
   belongs_to :creator
-  belongs_to :author
 
   ## Confirmable
   # field :confirmation_token,   type: String
