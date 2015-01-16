@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
     @title = contest[:name]
     @description = "Problems and rules for " + @title
     problems = contest.problems.order_by({ submissions_count: -1 })
-    @problems_hash = { data: problems, name: "Problems for " + contest[:name], panel_color: "purple" }
+    @problems_hash = { data: problems, name: "Problems for " + contest[:name], panel_color: "purple", ccode: contest_code }
   end
 
 end

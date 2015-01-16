@@ -1,63 +1,67 @@
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
-                        <% if @problems_hash[:data].count > 0 %>
-                            <div class="row">
-                                <div class="panel panel-color panel-<%= problems[:panel_color] %>">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title"><%= problems[:name] %></h3>
-                                        <div class="panel-options">
-                                            <a href="#" data-toggle="remove">&times;</a>
-                                        </div>
+                        <div class="row">
+                            <div class="panel panel-color panel-<%= @problems_hash[:panel_color] %>">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><%= @problems_hash[:name] %></h3>
+                                    <div class="panel-options">
+                                        <a href="#" data-toggle="remove">&times;</a>
                                     </div>
-                                    <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                        <script type="text/javascript">
-                                            jQuery(document).ready(function($) {
-                                                $("#<%= problems[:name].split(' ')[0].downcase %>").dataTable({
-                                                    aLengthMenu: [
-                                                        [10, 25, 50, 100, -1],
-                                                        [10, 25, 50, 100, "All"]
-                                                    ],
-                                                    "bLengthChange" : false, //thought this line could hide the LengthMenu
-                                                    "bInfo":false
+                                </div>
+                                <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <% if @problems_hash[:data].count > 0 %>
+                                            <script type="text/javascript">
+                                                jQuery(document).ready(function($) {
+                                                    $("#<%= @problems_hash[:ccode] %>").dataTable({
+                                                        aLengthMenu: [
+                                                            [10, 25, 50, 100, -1],
+                                                            [10, 25, 50, 100, "All"]
+                                                        ],
+                                                        "bLengthChange" : false, //thought this line could hide the LengthMenu
+                                                        "bInfo":false
+                                                    });
                                                 });
-                                            });
-                                        </script>
+                                            </script>
 
-                                        <table id="<%= problems[:name].split(' ')[0].downcase %>" class="table table-hover problems-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>Problem Code</th>
-                                                    <th>Total Submissions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% problems[:data].each do |problem| %>
+                                            <table id="<%= @problems_hash[:ccode] %>" class="table table-hover @problems_hash-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
                                                     <tr>
-                                                        <td class="user-name">
-                                                            <a href="#" class="name"><%=problem[:name]%></a>
-                                                            <!-- <span>Administrator</span> -->
-                                                        </td>
-                                                        <td class="user-name">
-                                                            <a href="#" class="name"><%=problem[:pcode]%></a>
-                                                            <!-- <span>Administrator</span> -->
-                                                        </td>
-                                                        <td class="timeago" title="<%=problem[:submissions_count]%>">
-                                                            <%=problem[:submissions_count]%>
-                                                        </td>
+                                                        <th>Name</th>
+                                                        <th>Problem Code</th>
+                                                        <th>Total Submissions</th>
                                                     </tr>
-                                                <% end %>
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    <% @problems_hash[:data].each do |problem| %>
+                                                        <tr>
+                                                            <td class="user-name">
+                                                                <a href="#" class="name"><%=problem[:name]%></a>
+                                                                <!-- <span>Administrator</span> -->
+                                                            </td>
+                                                            <td class="user-name">
+                                                                <a href="#" class="name"><%=problem[:pcode]%></a>
+                                                                <!-- <span>Administrator</span> -->
+                                                            </td>
+                                                            <td class="timeago" title="<%=problem[:submissions_count]%>">
+                                                                <%=problem[:submissions_count]%>
+                                                            </td>
+                                                        </tr>
+                                                    <% end %>
+                                                </tbody>
+                                            </table>
                                             <div class="row">
                                             </div>
-                                        </div>
+                                        <% else %>
+                                            <p>
+                                                No problems added for the contest. The contest may not be active yet or you may not be authorized to see the problems.
+                                            </p>
+                                        <% end %>
                                     </div>
                                 </div>
                             </div>
-                        <% end %>
+                        </div>
                     </div>
                     <div class="col-md-4" style="display:<%= @clarifications.nil? ? 'none' : '' %>">
                         <div class="panel panel-color panel-success">
