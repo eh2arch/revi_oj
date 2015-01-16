@@ -15,64 +15,65 @@
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <% if @problems_hash[:data].count > 0 %>
-                                            <script type="text/javascript">
-                                                jQuery(document).ready(function($) {
-                                                    $("#<%= @problems_hash[:ccode] %>").dataTable({
-                                                        aLengthMenu: [
-                                                            [10, 25, 50, 100, -1],
-                                                            [10, 25, 50, 100, "All"]
-                                                        ],
-                                                        "bLengthChange" : false, //thought this line could hide the LengthMenu
-                                                        "bInfo":false
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <% if @problems_hash[:data].count > 0 %>
+                                                <script type="text/javascript">
+                                                    jQuery(document).ready(function($) {
+                                                        $("#<%= @problems_hash[:ccode] %>").dataTable({
+                                                            aLengthMenu: [
+                                                                [10, 25, 50, 100, -1],
+                                                                [10, 25, 50, 100, "All"]
+                                                            ],
+                                                            "bLengthChange" : false, //thought this line could hide the LengthMenu
+                                                            "bInfo":false
+                                                        });
                                                     });
-                                                });
-                                            </script>
+                                                </script>
 
-                                            <table id="<%= @problems_hash[:ccode] %>" class="table table-hover data-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Problem Code</th>
-                                                        <th>Total Submissions</th>
-                                                        <th>Allowed Languages</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <% @problems_hash[:data].each_with_index do |problem, index| %>
+                                                <table id="<%= @problems_hash[:ccode] %>" class="table table-hover data-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                    <thead>
                                                         <tr>
-                                                            <td class="user-name">
-                                                                <%= link_to problem[:name], { action: "problem", ccode: @problems_hash[:ccode], pcode: problem[:pcode] }, class: "name" %>
-                                                                <!-- <span>Administrator</span> -->
-                                                            </td>
-                                                            <td class="text-primary">
-                                                                <%=problem[:pcode]%>
-                                                                <!-- <span>Administrator</span> -->
-                                                            </td>
-                                                            <td class="text-primary" title="<%=problem[:submissions_count]%>">
-                                                                <%=problem[:submissions_count]%>
-                                                            </td>
-                                                            <td>
-                                                                <% @problems_hash[:langdata][index].each do |language| %>
-                                                                    <h4>
-                                                                        <span class="tag label label-secondary"><%= language %>
-                                                                        </span>
-                                                                    </h4>
-                                                                <% end %>
-                                                            </td>
+                                                            <th>Name</th>
+                                                            <th>Problem Code</th>
+                                                            <th>Total Submissions</th>
+                                                            <th>Allowed Languages</th>
                                                         </tr>
-                                                    <% end %>
-                                                </tbody>
-                                            </table>
-                                            <div class="row">
-                                            </div>
-                                        <% else %>
-                                            <p>
-                                                No problems added for the contest. The contest may not be active yet or you may not be authorized to see the problems.
-                                            </p>
-                                        <% end %>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% @problems_hash[:data].each_with_index do |problem, index| %>
+                                                            <tr>
+                                                                <td class="user-name">
+                                                                    <%= link_to problem[:name], { action: "problem", ccode: @problems_hash[:ccode], pcode: problem[:pcode] }, class: "name" %>
+                                                                    <!-- <span>Administrator</span> -->
+                                                                </td>
+                                                                <td class="text-primary">
+                                                                    <%=problem[:pcode]%>
+                                                                    <!-- <span>Administrator</span> -->
+                                                                </td>
+                                                                <td class="text-primary" title="<%=problem[:submissions_count]%>">
+                                                                    <%=problem[:submissions_count]%>
+                                                                </td>
+                                                                <td>
+                                                                    <% @problems_hash[:langdata][index].each do |language| %>
+                                                                        <h4>
+                                                                            <span class="tag label label-secondary"><%= language %>
+                                                                            </span>
+                                                                        </h4>
+                                                                    <% end %>
+                                                                </td>
+                                                            </tr>
+                                                        <% end %>
+                                                    </tbody>
+                                                </table>
+                                                <div class="row">
+                                                </div>
+                                            <% else %>
+                                                <p>
+                                                    No problems added for the contest. The contest may not be active yet or you may not be authorized to see the problems.
+                                                </p>
+                                            <% end %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -91,5 +92,25 @@
                             </div>
                         </div>
                     </div>
-
+                </div>
+                <div class="row">
+                    <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
+                        <div class="row">
+                            <div class="panel panel-color panel-blue">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Rules</h3>
+                                    <div class="panel-options">
+                                        <a href="#" data-toggle="remove">&times;</a>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                        <p> Rules and other shit </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
