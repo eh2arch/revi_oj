@@ -9,8 +9,9 @@ CodecrackerV4::Application.routes.draw do
 
   get 'contests' => 'application#home'
   get 'home' => 'application#home'
+  get 'contests/:ccode/:pcode' => 'application#problem'
   get 'contests/:ccode' => 'application#contests'
-  get 'contests/:ccode/:pname' => 'application#contests'
+  get 'users/:username' => 'application#users'
   get 'error/404' => 'error#error_404'
 
   # You can have the root of your site routed with "root"

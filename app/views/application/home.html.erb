@@ -1,3 +1,9 @@
+                <div class="breadcrumb-env">
+                        <ol class="breadcrumb bc-1">
+                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
+                            <li class="active"> <strong><%= @title %></strong> </li>
+                        </ol>
+                </div>
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
                         <% @contests_array.each do |contests| %>
@@ -42,14 +48,14 @@
                                                                         <%= link_to contest[:name], { action: "contests", ccode: contest[:ccode] }, class: "name" %>
                                                                         <!-- <span>Administrator</span> -->
                                                                     </td>
-                                                                    <td class="user-name">
-                                                                        <a href="#" class="name"><%=contest[:ccode]%></a>
+                                                                    <td class="user-name text-primary">
+                                                                        <%=contest[:ccode]%>
                                                                         <!-- <span>Administrator</span> -->
                                                                     </td>
-                                                                    <td class="timeago" title="<%=contest[:start_time].to_time.iso8601%>">
+                                                                    <td class="timeago text-primary" title="<%=contest[:start_time].to_time.iso8601%>">
                                                                         <%=contest[:start_time].to_time.iso8601%>
                                                                     </td>
-                                                                    <td class="timeago" title="<%=contest[:end_time].to_time.iso8601%>">
+                                                                    <td class="timeago text-primary" title="<%=contest[:end_time].to_time.iso8601%>">
                                                                         <%=contest[:end_time].to_time.iso8601%>
                                                                     </td>
                                                                 </tr>

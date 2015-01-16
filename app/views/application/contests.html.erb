@@ -1,3 +1,9 @@
+                <div class="breadcrumb-env">
+                        <ol class="breadcrumb bc-1">
+                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
+                            <li class="active"> <strong><%= @title %></strong> </li>
+                        </ol>
+                </div>
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
                         <div class="row">
@@ -31,21 +37,30 @@
                                                         <th>Name</th>
                                                         <th>Problem Code</th>
                                                         <th>Total Submissions</th>
+                                                        <th>Allowed Languages</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <% @problems_hash[:data].each do |problem| %>
+                                                    <% @problems_hash[:data].each_with_index do |problem, index| %>
                                                         <tr>
                                                             <td class="user-name">
-                                                                <a href="#" class="name"><%=problem[:name]%></a>
+                                                                <%= link_to problem[:name], { action: "problem", ccode: @problems_hash[:ccode], pcode: problem[:pcode] }, class: "name" %>
                                                                 <!-- <span>Administrator</span> -->
                                                             </td>
-                                                            <td class="user-name">
-                                                                <a href="#" class="name"><%=problem[:pcode]%></a>
+                                                            <td class="text-primary">
+                                                                <%=problem[:pcode]%>
                                                                 <!-- <span>Administrator</span> -->
                                                             </td>
-                                                            <td class="" title="<%=problem[:submissions_count]%>">
+                                                            <td class="text-primary" title="<%=problem[:submissions_count]%>">
                                                                 <%=problem[:submissions_count]%>
+                                                            </td>
+                                                            <td>
+                                                                <% @problems_hash[:langdata][index].each do |language| %>
+                                                                    <h4>
+                                                                        <span class="label label-secondary"><%= language %>
+                                                                        </span>
+                                                                    </h4>
+                                                                <% end %>
                                                             </td>
                                                         </tr>
                                                     <% end %>
