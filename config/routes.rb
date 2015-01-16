@@ -1,10 +1,17 @@
 CodecrackerV4::Application.routes.draw do
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   devise_for :users, :controllers => {:sessions => 'users/sessions', :registrations => 'users/registrations'}
 
-  root :to => 'application#contests'
+  root :to => 'application#home'
+
+  get 'contests' => 'application#home'
+  get 'home' => 'application#home'
+  get 'contests/:ccode' => 'application#contests'
+  get 'contests/:ccode/:pname' => 'application#contests'
+  get 'error/404' => 'error#error_404'
 
   # You can have the root of your site routed with "root"
 
