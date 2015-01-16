@@ -17,6 +17,7 @@ gem 'devise'
 gem "bson"
 gem "moped"
 
+gem 'rails_admin', '~> 0.6.6'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
