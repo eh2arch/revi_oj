@@ -7,14 +7,76 @@
 				</div>
 				<h3 class="text-gray">
 				Submit Code <br> <small class="text-muted">Simple, beautiful editor</small> </h3>
-				 <div class="row">
-				    <div class="col-md-12" id="code">
+				<div class="row">
+				 	<div class="col-md-12" style="border:1px solid #ddd !important;padding-top:20px;background-color:#f7f7f7">
+				 		<form class="form-inline">
+                            <div class="form-group col-md-2">
+                                <select class="form-control" id="mode">
+                                    <option value="text/x-c++src">C++</option>
+                                    <option value="text/x-csrc">C</option>
+                                    <option value="text/x-java">Java</option>
+                                    <option value="python">Python</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                	<i class="fa-cog"></i>
+                                </button>
+                                <ul id="theme" class="dropdown-menu dropdown">
+	                                <li value="default"><a>Default</a></li>
+	                                <li value="solarized dark"><a>Solarized Dark</a></li>
+	                                <li value="solarized light"><a>Solarized Light</a></li>
+	                                <li value="mdn-like"><a>MDN-like</a></li>
+	                                <li value="monokai"><a>Monokai</a></li>
+	                                <li>
+		                                <a id="auto-complete-a">
+											AutoComplete
+		                                	<input type="checkbox" class="iswitch iswitch-turquoise">
+	                                	</a>
+	                                </li>
+                                </ul>
+                            </div>
+				 			<div class="col-md-2 pull-right">
+					 			<div class="btn btn-success btn-lg btn-block">Submit</div>
+				 			</div>
+				 		</form>
+				 	</div>
+				    <div class="col-md-12" id="code" style="border:1px solid #ddd !important;border-top:none !important;padding-left:0;padding-right:0">
 				    </div>
 				</div>
-				<script>
-				  var editor = new CodeMirror(document.getElementById("code"), {
-				    lineNumbers: true,
-				    extraKeys: {"Ctrl-Space": "autocomplete"},
-				    mode: {name: "javascript", globalVars: true}
-				  });
-				</script>
+                <script type="text/javascript">
+                    jQuery(document).ready(function($) {
+				        jQuery('.dropdown-toggle').dropdown();
+                        jQuery("#mode").selectBoxIt({
+                            showEffect: 'fadeIn',
+                            hideEffect: 'fadeOut'
+                        });
+						var editor = new CodeMirror(document.getElementById("code"), {
+							lineNumbers: true,
+							extraKeys: null,
+							mode: {name: "text/x-c++src", globalVars: true},
+							scrollbarStyle: "null",
+							lineWrapping: true,
+							viewportMargin: Infinity,
+							matchBrackets: true
+						});
+		                jQuery("#mode").change(function(){
+		                	editor.setOption("mode", jQuery(this).val());
+		                });
+		                jQuery("#theme li").click(function(){
+		                	editor.setOption("theme", jQuery(this).attr('value'));
+		                });
+		                jQuery(".dropdown-menu a#auto-complete-a ").click(function(e){
+		                	e.stopPropagation();
+		                });
+		                jQuery("input[type=checkbox]").change(function(){
+		                	if ($(this).is(':checked')) {
+		                		editor.setOption("extraKeys", {"Ctrl-Space": "autocomplete"});
+		                	}
+		                	else {
+		                		editor.setOption("extraKeys", null);
+		                	}
+		                	console.log(editor.getOption("extraKeys"));
+		                });
+                    });
+                </script>

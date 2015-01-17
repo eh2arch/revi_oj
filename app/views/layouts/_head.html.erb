@@ -8,12 +8,28 @@
         <%= stylesheet_link_tag "codemirror/doc/docs.css" %>
         <%= stylesheet_link_tag "codemirror/lib/codemirror.css" %>
         <%= stylesheet_link_tag "codemirror/addon/hint/show-hint.css" %>
+        <%= stylesheet_link_tag "codemirror/theme/base16-light.css" %>
+        <%= stylesheet_link_tag "codemirror/theme/mdn-like.css" %>
+        <%= stylesheet_link_tag "codemirror/theme/monokai.css" %>
+        <%= stylesheet_link_tag "codemirror/theme/solarized.css" %>
         <%= javascript_include_tag "codemirror/lib/codemirror.js" %>
+        <%= javascript_include_tag "codemirror/mode/clike/clike.js" %>
+        <%= javascript_include_tag "codemirror/mode/python/python.js" %>
+        <%= javascript_include_tag "codemirror/addon/edit/matchbrackets.js" %>
         <%= javascript_include_tag "codemirror/addon/hint/show-hint.js" %>
         <%= javascript_include_tag "codemirror/addon/hint/javascript-hint.js" %>
         <%= javascript_include_tag "codemirror/mode/javascript/javascript.js" %>
         <style type="text/css">
-          .CodeMirror {border-top: 1px solid #eee; border-bottom: 1px solid #eee;}
+            .CodeMirror {
+              border: 1px solid #eee;
+              height: auto;
+              min-height: 300px;
+            }
+            .CodeMirror-scroll {
+              overflow-y: hidden !important;
+              overflow-x: auto !important;
+            }
+
         </style>
     <% end %>
     <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
