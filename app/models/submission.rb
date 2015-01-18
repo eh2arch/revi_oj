@@ -4,6 +4,7 @@ class Submission
   field :submission_time,        type: DateTime, default: DateTime.now
   field :user_source_code,		 type: String, default: ''
   field :status_code,			 type: String, default: 'PE'
+  field :running_time,			 type: Float
   # Status Codes:
   # AC - Accepted
   # WA - Wrong Answer
