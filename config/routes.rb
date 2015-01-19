@@ -4,6 +4,8 @@ CodecrackerV4::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   devise_for :users, :controllers => {:sessions => 'users/sessions', :registrations => 'users/registrations'}
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
 
   root :to => 'application#home'
 
@@ -13,6 +15,8 @@ CodecrackerV4::Application.routes.draw do
   get 'contests/:ccode' => 'application#contests'
   get 'users/:username' => 'application#users'
   get 'error/404' => 'error#error_404'
+  get 'verify_submission' => 'application#verify_submission'
+  post 'verify_submission' => 'application#verify_submission'
 
   # You can have the root of your site routed with "root"
 

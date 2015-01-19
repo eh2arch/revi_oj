@@ -17,8 +17,8 @@ class ApplicationController < ActionController::Base
     ongoing_contests = Contest.where({ start_time: { :$lte => DateTime.now }, end_time: { :$gte => DateTime.now } })
     past_contests = Contest.where({ end_time: { :$lt => DateTime.now } })
     @contests_array = []
-    @contests_array << { data: upcoming_contests, name: "Upcoming Contests", panel_color: "info" }
     @contests_array << { data: ongoing_contests, name: "Ongoing Contests", panel_color: "success" }
+    @contests_array << { data: upcoming_contests, name: "Upcoming Contests", panel_color: "info" }
     @contests_array << { data: past_contests, name: "Past Contests", panel_color: "danger" }
   end
 
@@ -71,7 +71,45 @@ class ApplicationController < ActionController::Base
     @description = @description.html_safe
   end
 
-  def users
+  def verify_submission
+    user_source_code = params[:user_source_code]
+    language = params[:language]
+    problem_code = params[:pcode]
+    contest_code = params[:ccode]
+    language_document = Language.where(name: language).first
+    if language_document.nil?
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+    contest = Contest.where({ ccode: contest_code, state: true }).first
+    if contest.nil?
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+    problem = contest.problems.where({ pcode: problem_code, state: true }).first
+    if problem.nil? || contest[:start_time] > DateTime.now || contest[:end_time] < DateTime.now
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+    latest_submission = current_user.submissions.order_by({ created_at: -1 }).first
+    unless latest_submission.nil?
+      if ((DateTime.now - latest_submission[:created_at] ) * 24*60*60).to_f < 30
+        @notif_quick_submit = true
+        home and render action: 'home'
+        return
+      end
+    end
+    source_limit = problem[:source_limit]
+    if user_source_code.length > source_limit
+        @notif_source_limit_exceed = true
+        home and render action: 'home'
+        return
+    end
+    submission = Submission.new(user_source_code: user_source_code)
+    submission.language = language_document
+    problem.submissions << submission
+    current_user.submission << submission
+    # Put worker in queue
+    @notif_submission_success = true
+    home and render action: 'home'
+    return
   end
 
 end
