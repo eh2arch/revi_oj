@@ -1,0 +1,8 @@
+:queues:
+  - default
+
+:logfile:
+  ./log/sidekiq.log
+
+:concurrency:
+  200
