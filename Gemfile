@@ -19,6 +19,12 @@ gem "moped"
 
 gem 'rails_admin', '~> 0.6.6'
 
+gem 'sinatra', :require => nil
+gem 'sidekiq'
+gem 'sidekiq-failures'
+
+gem 'snappconfig'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 # Use Uglifier as compressor for JavaScript assets
