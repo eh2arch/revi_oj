@@ -3,6 +3,6 @@ class Creator
   include Mongoid::Timestamps::Created::Short
 
   has_one :user
-  has_and_belongs_to_many :contests
-  has_and_belongs_to_many :problems
+  has_many :contests
+  has_many :problems
 end

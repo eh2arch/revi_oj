@@ -1,0 +1,13 @@
+# DEFAULT APPLICATION CONFIGURATION
+# For examples, see: https://github.com/ykessler/snappconfig#snappconfig
+
+#Indentation using tabs is not allowed will raise errors
+
+base_path: "/usr/local/bin/codecracker_v4"
+networks: ["twitter","facebook","instagram"]
+social_networks:
+ country: "geo_country"
+job:
+ active: 0
+ schedule: 1
+ scheduled: 2

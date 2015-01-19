@@ -1,7 +1,7 @@
 class Language
   include Mongoid::Document
 
-  field :name,                   type: String, default: 'cplusplus'
+  field :name,                   type: String, default: 'c++'
   field :langcode,               type: String, default: 'c++'
   field :time_multiplier,		 type: Float, default: '1.0'
 

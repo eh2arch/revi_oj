@@ -53,4 +53,12 @@ class User
     end
   end
 
+  before_save :init_user
+
+  def init_user
+    email = self[:email]
+    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}"
+    return true
+  end
+
 end

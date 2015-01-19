@@ -8,9 +8,21 @@ class Contest
   field :end_time,				 type: DateTime, default: DateTime.now + 3.hours
   field :state, 				 type: Boolean, default: true
 
-  has_and_belongs_to_many :creators
+  belongs_to :creator, :counter_cache => true
 
   has_and_belongs_to_many :users
   has_many :problems
+
+  before_save :create_contest_folder
+
+  def create_contest_folder
+  	users = self.users
+  	users.each do |user|
+	    email = user[:email]
+	    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{self[:ccode]}"
+  	end
+  	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{self[:ccode]}"
+    return true
+  end
 
 end
