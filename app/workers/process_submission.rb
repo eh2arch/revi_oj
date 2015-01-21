@@ -2,7 +2,7 @@ class ProcessSubmission
 
   include Process
   include Sidekiq::Worker
-  # sidekiq_options :queue => :default, :retry => 5
+  sidekiq_options unique: true, :queue => :default, :retry => 5
   require 'scanf'
 
   def perform(args)

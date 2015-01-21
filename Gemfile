@@ -21,7 +21,10 @@ gem 'rails_admin', '~> 0.6.6'
 
 gem 'sinatra', :require => nil
 gem 'sidekiq'
+gem 'sidetiq'
+gem 'sidekiq-status'
 gem 'sidekiq-failures'
+gem 'sidekiq-unique-jobs'
 
 gem 'snappconfig'
 
