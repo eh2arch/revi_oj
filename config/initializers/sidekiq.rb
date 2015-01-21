@@ -1,8 +1,6 @@
-Sidekiq.configure_server do |config|
-  config.authorize_with do
-    authenticate_or_request_with_http_basic('Login required') do |username, password|
-      username == Rails.application.secrets.user &&
-      password == Rails.application.secrets.password
-    end
-  end
+require 'sidekiq'
+require 'sidekiq/web'
+
+Sidekiq::Web.use(Rack::Auth::Basic) do |user, password|
+  [user, password] == ["bowchikibowwow", "skyfullofstars_coldplay`love"]
 end

@@ -5,4 +5,4 @@
   ./log/sidekiq.log
 
 :concurrency:
-  200
+  40
