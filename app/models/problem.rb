@@ -31,6 +31,7 @@ class Problem
 	    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{self[:pcode]}"
 	end
 	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}/test_cases"
+	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}/test_case_outputs"
     return true
   end
 end

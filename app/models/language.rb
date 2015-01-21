@@ -5,7 +5,7 @@ class Language
   field :langcode,               type: String, default: 'c++'
   field :time_multiplier,		 type: Float, default: '1.0'
 
-  belongs_to :submission
-  belongs_to :problem
+  has_many :submissions
+  has_and_belongs_to_many :problems
 
 end

@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
 
   def contests
     contest_code = params[:ccode]
-    contest = Contest.where({ ccode: contest_code, state: true }).first
+    contest = Contest.where( ccode: contest_code, state: true, start_time: { :$lte => DateTime.now } ).first
     if contest.nil?
       redirect_to controller: 'error', action: 'error_404' and return
     end
@@ -47,13 +47,13 @@ class ApplicationController < ActionController::Base
   end
 
   def problem
-    contest_code = params[:ccode]
-    problem_code = params[:pcode]
-    contest = Contest.where({ ccode: contest_code, state: true }).first
+    @contest_code = params[:ccode]
+    @problem_code = params[:pcode]
+    contest = Contest.where({ ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } }).first
     if contest.nil?
       redirect_to controller: 'error', action: 'error_404' and return
     end
-    problem = contest.problems.where({ pcode: problem_code, state: true }).first
+    problem = contest.problems.where({ pcode: @problem_code, state: true }).first
     if problem.nil?
       redirect_to controller: 'error', action: 'error_404' and return
     end
@@ -63,8 +63,8 @@ class ApplicationController < ActionController::Base
     @problem_text = problem[:statement]
     @language_names = get_language_parameter(problem, 'name')
     @language_langcodes = get_language_parameter(problem, 'langcode')
-    @creator_name = problem.creators.first.user[:full_name]
-    @creator_username = problem.creators.first.user[:username]
+    @creator_name = problem.creator.user[:full_name]
+    @creator_username = problem.creator.user[:username]
     @problem_created_at = problem[:created_at]
     link = view_context.link_to(@creator_name, { action: 'users', username: @creator_username }, class: "text-info")
     @description = 'Created <span class="timeago text-primary" title="' + problem[:created_at].to_time.iso8601.to_s + '"></span> by ' + link
@@ -72,10 +72,10 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_submission
-    user_source_code = params[:user_source_code]
-    language = params[:language]
-    problem_code = params[:pcode]
-    contest_code = params[:ccode]
+    user_source_code = params["user_source_code"]
+    language = params["language"]
+    problem_code = params["pcode"]
+    contest_code = params["ccode"]
     language_document = Language.where(name: language).first
     if language_document.nil?
       redirect_to controller: 'error', action: 'error_404' and return
@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
     end
     latest_submission = current_user.submissions.order_by({ created_at: -1 }).first
     unless latest_submission.nil?
-      if ((DateTime.now - latest_submission[:created_at] ) * 24*60*60).to_f < 30
+      if DateTime.now.to_time - latest_submission[:created_at] < 30
         @notif_quick_submit = true
         home and render action: 'home'
         return
@@ -105,8 +105,12 @@ class ApplicationController < ActionController::Base
     submission = Submission.new(user_source_code: user_source_code)
     submission.language = language_document
     problem.submissions << submission
-    current_user.submission << submission
+    current_user.submissions << submission
+    submission.save_submission
+
     # Put worker in queue
+    ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
+
     @notif_submission_success = true
     home and render action: 'home'
     return

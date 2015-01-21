@@ -46,7 +46,6 @@
 					"showMethod": "fadeIn",
 					"hideMethod": "fadeOut"
 					};
-					toastr.success("Source code submitted successfully. Please check the submissions page for the status", "Success", opts);
 				  <% if @notif_quick_submit %>
 						toastr.error("You're only allowed to make one submission in 30 seconds. Please try after some time", "Submission Error", opts);
 				  <% elsif @notif_source_limit_exceed %>
