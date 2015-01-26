@@ -172,4 +172,40 @@ class ApplicationController < ActionController::Base
     @user_array.sort! { |a,b| a[:successes] > b[:successes] ? -1 : (a[:successes] < b[:successes] ? 1 : (a[:total_time] <=> b[:total_time])) }
   end
 
+  def submissions
+    @title = "Submissions"
+    @main_content_page = true
+    @submissions_page = true
+    @contest_code = params[:ccode] || nil
+    unless @contest_code.nil?
+      contest = Contest.where(ccode: @contest_code).first
+      if contest.nil?
+        redirect_to controller: 'error', action: 'error_404' and return
+      end
+      problems = contest.problems
+      problem_ids = problems.to_a.map { |problem| problem[:_id] }
+      @submissions = Submission.where(:problem_id.in => problem_ids).order_by(submission_time: -1).page(params[:page]).per(30)
+    else
+      @submissions = Submission.order_by(submission_time: -1).page(params[:page]).per(30)
+    end
+    @users = []
+    @problems = []
+    @submissions.each do |submission|
+      user = submission.user
+      @users << { name: user[:name], college: user[:college] }
+      @problems << submission.problem[:pcode]
+    end
+  end
+
+  def get_submission_data
+    submission = Submission.where(_id: params['submission_id']).first
+    if submission.nil?
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+    respond_to do |format|
+      format.html
+      format.json { render json: { status_code: submission[:status_code] } }
+    end
+  end
+
 end

@@ -24,3 +24,5 @@ Rails.application.config.assets.precompile += %w( codemirror/addon/hint/javascri
 Rails.application.config.assets.precompile += %w( codemirror/mode/javascript/javascript.js )
 Rails.application.config.assets.precompile += %w( jquery-ui/jquery-ui.min.js )
 Rails.application.config.assets.precompile += %w( selectboxit/jquery.selectBoxIt.min.js )
+Rails.application.config.assets.precompile += %w( code-editor.js )
+Rails.application.config.assets.precompile += %w( submissions.js )

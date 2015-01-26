@@ -1,0 +1,75 @@
+                <div class="breadcrumb-env">
+                        <ol class="breadcrumb bc-1">
+                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
+                            <li class="active"> <strong><%= @title %></strong> </li>
+                        </ol>
+                </div>
+                <div class="row">
+                    <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
+                        <div class="row">
+                            <div class="panel panel-color panel-blue">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Latest submissions</h3>
+                                    <div class="panel-options">
+                                        <a href="#" data-toggle="remove">&times;</a>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                <table id="scoretable" class="table table-hover middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Problem Code</th>
+                                                            <th>Status Code</th>
+                                                            <th>Submission Time</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% @submissions.each_with_index do |submission, index| %>
+                                                            <tr>
+                                                                <td class="text-primary">
+                                                                    <strong><%=@users[index][:name]%></strong>
+                                                                    <span>
+                                                                        <%=@users[index][:college]%>
+                                                                    </span>
+                                                                </td>
+                                                                <td class="text-primary">
+                                                                    <%=@problems[index]%>
+                                                                </td>
+                                                                <td data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
+                                                                    <%=submission[:status_code]%>
+                                                                </td>
+                                                                <td>
+                                                                    <%=submission[:submission_time]%>
+                                                                </td>
+                                                            </tr>
+                                                        <% end %>
+                                                    </tbody>
+                                                </table>
+                                                <div class="row">
+                                                    <%= paginate @submissions %>
+                                                </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:<%= @clarifications.nil? ? 'none' : '' %>">
+                        <div class="panel panel-color panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Clarifications</h3>
+                                <div class="panel-options">
+                                    <a href="#" data-toggle="remove">&times;</a>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <p>Fat far.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%= javascript_include_tag "submissions.js" %>

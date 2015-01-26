@@ -18,6 +18,9 @@ CodecrackerV4::Application.routes.draw do
   get 'error/404' => 'error#error_404'
   get 'submit' => 'application#verify_submission'
   post 'submit' => 'application#verify_submission'
+  get 'submissions' => 'application#submissions'
+  get 'submissions/:ccode' => 'application#submissions'
+  get 'get_submission_data' => 'application#get_submission_data'
 
   # You can have the root of your site routed with "root"
 
