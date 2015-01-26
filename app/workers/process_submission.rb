@@ -6,7 +6,7 @@ class ProcessSubmission
   require 'scanf'
 
   def perform(args)
-  	file_extensions = { 'c++' => '.cpp' }
+  	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
   	submission_id = args["submission_id"]
   	submission = get_submission(submission_id)
   	if submission.nil?
@@ -17,25 +17,31 @@ class ProcessSubmission
   	problem = submission.problem
   	pcode = problem[:pcode]
   	ccode = problem.contest[:ccode]
-  	tlimit = problem[:time_limit]
+  	tlimit = problem[:time_limit] * submission.language[:time_multiplier]
   	mlimit = problem[:memory_limit]
   	@submission_path = "#{CONFIG[:base_path]}/#{user_email}/#{ccode}/#{pcode}/#{submission_id}/"
 
   	if langcode == 'c++'
-  		compile_path = "bash -c 'g++ -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
-  		pid = spawn(compile_path, :chdir => @submission_path)
-  		pid, status = wait2(pid, 0)
-  		if !status.exited? || status.exitstatus.to_i != 0
-  			compilation_error = nil
-  			begin
-	  			compilation_error = File.read(@submission_path + "compiler")
-	  		rescue
-	  			compilation_error = "Unknown error"
-	  		end
-	  		submission.update_attributes!(status_code: "CE", error_description: compilation_error)
-	  		return
-  		end
-  	end
+  		compile_path = "bash -c 'g++ -std=c++0x -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
+    elsif langcode == 'c'
+      compile_path = "bash -c 'gcc -std=gnu99 -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
+    elsif langcode == 'java'
+      compile_path = "bash -c 'javac ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
+    elsif langcode == 'python'
+      compile_path = "bash -c 'python -m py_compile ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
+    end
+    pid = spawn(compile_path, :chdir => @submission_path)
+    pid, status = wait2(pid, 0)
+    if !status.exited? || status.exitstatus.to_i != 0
+      compilation_error = nil
+      begin
+        compilation_error = File.read(@submission_path + "compiler")
+      rescue
+        compilation_error = "Unknown error"
+      end
+      submission.update_attributes!(status_code: "CE", error_description: compilation_error)
+      return
+    end
 
   	signal_list = Signal.list.invert
 
@@ -47,7 +53,11 @@ class ProcessSubmission
 
   	test_cases.each do |test_case|
   		time_start = Time.now()
-  		pid = spawn({"SHELL" => "/bin/bash"}, "#{@submission_path}compiled_code", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+      if langcode == 'python'
+        pid = spawn({"SHELL" => "/bin/bash"}, "python #{@submission_path}user_source_code#{file_extensions[langcode]}", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+      else
+    		pid = spawn({"SHELL" => "/bin/bash"}, "#{@submission_path}compiled_code", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+      end
   		pid_new = status = max_memory_used = 0
   		error_flag = nil
 
@@ -74,8 +84,12 @@ class ProcessSubmission
 		  			end
 		  		end
 	  			unless error_flag.nil?
-	  				Process.kill('KILL', pid)
-	  				break
+            begin
+  	  				Process.kill('KILL', pid)
+  	  				break
+            rescue Errno::ESRCH => e
+              break
+            end
 	  			end
 		  	rescue Errno::ECHILD => e
 		  	end

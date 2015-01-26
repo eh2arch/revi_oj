@@ -38,7 +38,7 @@
                                                                 <th><%=problem[:name]%></th>
                                                             <% end %>
                                                             <th>Total Time</th>
-                                                            <th>Sscore  </th>
+                                                            <th>Score</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -46,8 +46,10 @@
                                                             <tr>
                                                                 <td class="text-primary">
                                                                     <strong><%=user[:username]%></strong>
-                                                                    <span><%=user[:college]%></span>
-                                                                    <span><%=user[:email]%></span>
+                                                                    <span>
+                                                                        <%=user[:college]%>
+                                                                        <i><%=user[:email]%></i>
+                                                                    </span>
                                                                 </td>
                                                                 <% user[:problems].each do |problem| %>
                                                                     <% if problem[:success] %>

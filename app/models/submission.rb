@@ -22,7 +22,7 @@ class Submission
   # before_save :save_submission
 
   def save_submission
-  	file_extensions = { 'c++' => '.cpp' }
+  	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
   	submission_id = self[:_id]
   	user = self.user
   	email = user[:email]

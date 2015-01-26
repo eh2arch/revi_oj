@@ -169,7 +169,6 @@ class ApplicationController < ActionController::Base
       end
       @user_array << user_hash
     end
-    puts @current_user_arr[:email].to_s
     @user_array.sort! { |a,b| a[:successes] > b[:successes] ? -1 : (a[:successes] < b[:successes] ? 1 : (a[:total_time] <=> b[:total_time])) }
   end
 
