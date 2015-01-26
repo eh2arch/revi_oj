@@ -8,6 +8,7 @@ class User
   ## Database authenticatable
   field :email,              type: String, default: ""
   field :username,           type: String, default: ""
+  field :college,           type: String, default: ""
   field :encrypted_password, type: String, default: ""
   field :full_name,          type: String, default: ""
   field :phone,              type: String, default: ""

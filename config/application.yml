@@ -4,6 +4,7 @@
 #Indentation using tabs is not allowed will raise errors
 
 base_path: "/usr/local/bin/codecracker_v4"
+penalty: 20
 networks: ["twitter","facebook","instagram"]
 social_networks:
  country: "geo_country"

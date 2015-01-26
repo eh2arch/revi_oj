@@ -1,0 +1,95 @@
+                <div class="breadcrumb-env">
+                        <ol class="breadcrumb bc-1">
+                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
+                            <li class="active"> <strong><%= @title %></strong> </li>
+                        </ol>
+                </div>
+                <div class="row">
+                    <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
+                        <div class="row">
+                            <div class="panel panel-color panel-blue">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Scoreboard</h3>
+                                    <div class="panel-options">
+                                        <a href="#" data-toggle="remove">&times;</a>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                <script type="text/javascript">
+                                                    jQuery(document).ready(function($) {
+                                                        $("#scoretable").dataTable({
+                                                            aLengthMenu: [
+                                                                [10, 25, 50, 100, -1],
+                                                                [10, 25, 50, 100, "All"]
+                                                            ],
+                                                            "bLengthChange" : false, //thought this line could hide the LengthMenu
+                                                            "bInfo":false
+                                                        });
+                                                    });
+                                                </script>
+
+                                                <table id="scoretable" class="table table-hover data-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <% @problems.each do |problem| %>
+                                                                <th><%=problem[:name]%></th>
+                                                            <% end %>
+                                                            <th>Total Time</th>
+                                                            <th>Sscore  </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% @user_array.each do |user| %>
+                                                            <tr>
+                                                                <td class="text-primary">
+                                                                    <strong><%=user[:username]%></strong>
+                                                                    <span><%=user[:college]%></span>
+                                                                    <span><%=user[:email]%></span>
+                                                                </td>
+                                                                <% user[:problems].each do |problem| %>
+                                                                    <% if problem[:success] %>
+                                                                        <td class="text-primary" style="background-color:green">
+                                                                            <%= ((problem[:success_time] - @contest_start_time)/60).round(2).to_s + ' + ' + (20 * problem[:wa_count]).to_s %>
+                                                                        </td>
+                                                                    <% else %>
+                                                                        <td class="text-primary" style="background-color:red">
+                                                                            <%= problem[:wa_count].to_s %>
+                                                                        </td>
+                                                                    <% end %>
+                                                                <% end %>
+                                                                <td class="text-primary">
+                                                                    <%=user[:total_time].round(2)%>
+                                                                </td>
+                                                                <td>
+                                                                    <%=user[:successes]%>
+                                                                </td>
+                                                            </tr>
+                                                        <% end %>
+                                                    </tbody>
+                                                </table>
+                                                <div class="row">
+                                                </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:<%= @clarifications.nil? ? 'none' : '' %>">
+                        <div class="panel panel-color panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Clarifications</h3>
+                                <div class="panel-options">
+                                    <a href="#" data-toggle="remove">&times;</a>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <p>Fat far.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>

@@ -14,7 +14,7 @@ class TestCase
   	problem = self.problem
   	contest = problem.contest
   	ccode = contest[:ccode]
-  	pcode = contest[:pcode]
+  	pcode = problem[:pcode]
     test_case = File.open("#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/#{self[:name]}", 'w')
 	test_case.write(self[:test_case])
 	test_case.close

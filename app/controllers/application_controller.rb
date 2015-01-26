@@ -102,11 +102,14 @@ class ApplicationController < ActionController::Base
         home and render action: 'home'
         return
     end
-    submission = Submission.new(user_source_code: user_source_code)
+    submission = Submission.new(user_source_code: user_source_code, submission_time: DateTime.now)
     submission.language = language_document
     problem.submissions << submission
     current_user.submissions << submission
     submission.save_submission
+    if contest.users.where(email: current_user[:email]).count == 0
+      contest.users << current_user
+    end
 
     # Put worker in queue
     ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
@@ -114,6 +117,60 @@ class ApplicationController < ActionController::Base
     @notif_submission_success = true
     home and render action: 'home'
     return
+  end
+
+  def scoreboard
+    @main_content_page = true
+    @scoreboard_page = true
+    @title = params[:ccode]
+    @contest_code = params[:ccode]
+    contest = Contest.where({ ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } }).first
+    if contest.nil?
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+    @contest_start_time = contest[:start_time]
+
+    # Submission.collection.aggregate([ { "$match" => { "status_code" => "AC" } }, { "$group" => { "_id" => "$user_id", "ac_count"=> { "$sum" => 1 }}},{ "$sort"=> {"acs"=> -1} }])
+
+    contest_users = contest.users
+    @user_array = []
+    @current_user_arr = {}
+    @problems = contest.problems.only(:_id, :pcode, :name)
+    contest_users.each do |user|
+      user_hash = { email: user[:email], college: user[:college], username: user[:username] }
+      problem_array = []
+      total_time = @contest_start_time
+      total_success = 0
+      @problems.each do |problem|
+        problem_hash = { pcode: problem[:pcode], name: problem[:name] }
+        problem_submissions = Submission.where(user_id: user[:_id], problem_id: problem[:_id])
+        problem_submissions_ac = problem_submissions.where(status_code: "AC").order_by(submission_time: 1)
+        if problem_submissions_ac.count > 0
+          user_ac_earliest_time = problem_submissions_ac.first[:submission_time]
+          problem_hash.merge! ({ success_time: user_ac_earliest_time, success: true })
+          user_not_ac_count = problem_submissions
+                              .where(:status_code.nin => ["AC", "PE", "CE"], :submission_time.lte => user_ac_earliest_time)
+                              .count
+          problem_hash.merge! ({ wa_count: user_not_ac_count })
+          total_time += user_ac_earliest_time - @contest_start_time + user_not_ac_count * CONFIG[:penalty].minutes
+          total_success += 1
+        else
+          problem_hash.merge! ({ success: false })
+          user_wa_count = problem_submissions
+                              .where(:status_code.nin => ["AC", "PE", "CE"])
+                              .count
+          problem_hash.merge! ({ wa_count: user_wa_count })
+        end
+        problem_array << problem_hash
+      end
+      user_hash.merge! ({ problems: problem_array, total_time: (total_time - @contest_start_time) / 60, successes: total_success })
+      if current_user[:email] == user[:email]
+        @current_user_arr = user_hash
+      end
+      @user_array << user_hash
+    end
+    puts @current_user_arr[:email].to_s
+    @user_array.sort! { |a,b| a[:successes] > b[:successes] ? -1 : (a[:successes] < b[:successes] ? 1 : (a[:total_time] <=> b[:total_time])) }
   end
 
 end

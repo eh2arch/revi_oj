@@ -11,6 +11,7 @@ CodecrackerV4::Application.routes.draw do
 
   get 'contests' => 'application#home'
   get 'home' => 'application#home'
+  get 'scoreboard/:ccode' => 'application#scoreboard'
   get 'contests/:ccode/:pcode' => 'application#problem'
   get 'contests/:ccode' => 'application#contests'
   get 'users/:username' => 'application#users'

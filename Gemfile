@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 gem 'rails', '4.1.1'
 
 
+gem 'recaptcha', :require => 'recaptcha/rails'
+
 gem 'mongo'
 
 # Use Mongoid as the database

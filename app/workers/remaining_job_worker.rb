@@ -9,7 +9,6 @@ class RemainingJobWorker
   recurrence { hourly.minute_of_hour(0, 15, 30, 45) }
 
   def perform()
-    puts 'working'
     now = (DateTime.now.to_i / 15).floor * 15
 
     submissions = Submission.where(status_code: "PE")

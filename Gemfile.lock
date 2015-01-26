@@ -134,6 +134,7 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
       json (~> 1.4)
+    recaptcha (0.3.6)
     redis (3.1.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
@@ -211,6 +212,7 @@ DEPENDENCIES
   moped
   rails (= 4.1.1)
   rails_admin (~> 0.6.6)
+  recaptcha
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
   sidekiq

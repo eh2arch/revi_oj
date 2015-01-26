@@ -16,11 +16,11 @@
 		<div class="page-loading-overlay">
 		    <div class="loader-2"></div>
 		</div>
-		<% if @home_page || @contest_page || @problem_page %>
+		<% if @home_page || @contest_page || @problem_page || @scoreboard_page %>
 			<%= stylesheet_link_tag "datatables/dataTables.bootstrap.css" %>
 		<% end %>
 		<%= javascript_include_tag "application_footer.js" %>
-		<% if @home_page || @contest_page || @problem_page %>
+		<% if @home_page || @contest_page || @problem_page || @scoreboard_page %>
 			<%= javascript_include_tag "datatables/js/jquery.dataTables.min.js" %>
 			<%= javascript_include_tag "datatables/dataTables.bootstrap.js" %>
 			<%= javascript_include_tag "datatables/yadcf/jquery.dataTables.yadcf.js" %>
