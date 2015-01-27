@@ -31,7 +31,7 @@
                         <label class="control-label" for="user_password_confirmation">Password Confirmation</label>
 	                    <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control input-dark'%>
                     </div>
-                    <%= recaptcha_tags :ssl => true%>
+                    <%= recaptcha_tags %>
                     <div class="form-group">
                         <button type="submit" class="btn btn-dark btn-block text-left"> <i class="fa-caret-square-o-right"></i> Complete Registration
                         </button>
