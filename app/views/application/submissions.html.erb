@@ -1,7 +1,10 @@
                 <div class="breadcrumb-env">
                         <ol class="breadcrumb bc-1">
-                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
-                            <li class="active"> <strong><%= @title %></strong> </li>
+                            <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
+                            <li class="active"> <a href="/submissions"><i class="fa-signal"></i><%= @title %> </a> </li>
+                            <% unless @contest_code.nil? %>
+                                <li class="active"> <strong><i class="fa-cubes"></i><%= @contest_code %></strong> </li>
+                            <% end %>
                         </ol>
                 </div>
                 <div class="row">
@@ -41,8 +44,8 @@
                                                                 <td data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
                                                                     <%=submission[:status_code]%>
                                                                 </td>
-                                                                <td>
-                                                                    <%=submission[:submission_time]%>
+                                                                <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
+                                                                    <%=submission[:submission_time].to_time.iso8601%>
                                                                 </td>
                                                             </tr>
                                                         <% end %>

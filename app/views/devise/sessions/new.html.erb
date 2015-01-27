@@ -1,5 +1,13 @@
 				<h2><% @title = 'Log in Page | CodeCracker' %></h2>
-
+                <% if flash[:notice] %>
+                    <div class="row">
+                        <div class="col-md-12">
+                          <div class="alert alert-success">
+                            <%=flash[:notice]%>
+                          </div>
+                        </div>
+                    </div>
+                <% end %>
 
 				<%= form_for(resource, as: resource_name, url: session_path(resource_name), :html => { role: "form", id: "login", class: "login-form fade-in-effect", novalidate: "novalidate" }) do |f| %>
                     <div class="login-header">

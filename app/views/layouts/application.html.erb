@@ -21,6 +21,12 @@
 		<% end %>
 		<%= javascript_include_tag "application_footer.js" %>
 		<% if @home_page || @contest_page || @problem_page || @scoreboard_page || @submissions_page %>
+			<style>
+				table, th
+				{
+					text-align:center !important;
+				}
+			</style>
 			<%= javascript_include_tag "datatables/js/jquery.dataTables.min.js" %>
 			<%= javascript_include_tag "datatables/dataTables.bootstrap.js" %>
 			<%= javascript_include_tag "datatables/yadcf/jquery.dataTables.yadcf.js" %>

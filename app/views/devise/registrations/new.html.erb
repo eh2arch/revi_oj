@@ -2,7 +2,16 @@
 
 				<%= form_for(resource, as: resource_name, url: registration_path(resource_name), :html => { role: "form", id: "login", class: "login-form fade-in-effect", novalidate: "novalidate" }) do |f| %>
 				  <%= devise_error_messages! %>
-
+                  <% if flash[:alert] %>
+                    <div class="row">
+                        <div class="col-md-12">
+                          <div class="alert alert-danger">
+                            <strong>An error occurred</strong>
+                            <%=flash[:alert]%>
+                          </div>
+                        </div>
+                    </div>
+                  <% end %>
                     <div class="login-header">
                         <a href="#" class="logo"> <img src="../../assets/images/logo%402x.png" alt="" width="80" /> <span>log in</span> </a>
                         <p>Dear user, log in to access the admin area!</p>

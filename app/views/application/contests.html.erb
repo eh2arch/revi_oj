@@ -1,7 +1,7 @@
                 <div class="breadcrumb-env">
                         <ol class="breadcrumb bc-1">
-                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
-                            <li class="active"> <strong><%= @title %></strong> </li>
+                            <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
+                            <li class="active"> <strong><i class="fa-reorder"></i><%= @title %></strong> </li>
                         </ol>
                 </div>
                 <div class="row">
@@ -55,12 +55,12 @@
                                                                     <%=problem[:submissions_count]%>
                                                                 </td>
                                                                 <td>
+                                                                    <h4>
                                                                     <% @problems_hash[:langdata][index].each do |language| %>
-                                                                        <h4>
                                                                             <span class="tag label label-secondary"><%= language %>
                                                                             </span>
-                                                                        </h4>
                                                                     <% end %>
+                                                                    </h4>
                                                                 </td>
                                                             </tr>
                                                         <% end %>
