@@ -30,6 +30,8 @@ gem 'sidekiq-unique-jobs'
 
 gem 'snappconfig'
 
+gem 'bootstrap-kaminari-views'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 # Use Uglifier as compressor for JavaScript assets
