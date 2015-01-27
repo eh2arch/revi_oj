@@ -26,7 +26,7 @@ class ProcessSubmission
     elsif langcode == 'c'
       compile_path = "bash -c 'gcc -std=gnu99 -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
     elsif langcode == 'java'
-      compile_path = "bash -c 'javac ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
+      compile_path = "bash -c 'javac ./Main#{file_extensions[langcode]} >& ./compiler'"
     elsif langcode == 'python'
       compile_path = "bash -c 'python -m py_compile ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
     end
@@ -55,6 +55,8 @@ class ProcessSubmission
   		time_start = Time.now()
       if langcode == 'python'
         pid = spawn({"SHELL" => "/bin/bash"}, "python #{@submission_path}user_source_code#{file_extensions[langcode]}", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+      elsif langcode == 'java'
+          pid = spawn({"SHELL" => "/bin/bash"}, "java -cp #{@submission_path} Main", :rlimit_rss => [1572864000,1572864000], :rlimit_stack => [1572864000,1572864000], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
       else
     		pid = spawn({"SHELL" => "/bin/bash"}, "#{@submission_path}compiled_code", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
       end

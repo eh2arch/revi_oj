@@ -33,7 +33,11 @@ class Submission
   	language = self.language
   	langcode = language[:langcode]
 	system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}"
-	input = File.open("#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/user_source_code#{file_extensions[langcode]}", 'w')
+    if langcode == 'java'
+        input = File.open("#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/Main#{file_extensions[langcode]}", 'w')
+    else
+    	input = File.open("#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/user_source_code#{file_extensions[langcode]}", 'w')
+    end
 	input.write(self[:user_source_code])
 	input.close
 	return true

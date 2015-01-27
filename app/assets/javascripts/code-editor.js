@@ -31,13 +31,4 @@ jQuery(document).ready(function() {
     	}
     	console.log(editor.getOption("extraKeys"));
     });
-    jQuery("#submit-code").click(function(){
-    	data = {};
-    	data["user_source_code"] = editor.getValue();
-    	mode_dom_element = document.getElementById("mode");
-    	data["language"] = mode_dom_element.options[mode_dom_element.selectedIndex].text.toLowerCase();
-    	data["pcode"] = "<%= @problem_code %>";
-    	data["ccode"] = "<%= @contest_code %>";
-    	window.location.href = "../../submit?" + jQuery.param(data);
-    });
 });
