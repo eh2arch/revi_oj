@@ -13,8 +13,23 @@ jQuery(document).ready(function() {
                 }, 3000);
               }
               else {
+                var img_attr = null;
+                if(submission_data == 'WA'){
+                    img_attr='cross.png';
+                }
+                else if (submission_data == 'AC'){
+                    img_attr='tick.png';
+                }
+                else if (submission_data == 'CE') {
+                    img_attr='exclamation.png';
+                }
+                else
+                {
+                    img_attr='alert.png';   
+                }
+
                 element.setAttribute('data-status-code', submission_data['status_code']);
-                element.innerHTML = submission_data['status_code'];
+                element.innerHTML = "<img src='assets/images/" + img_attr + "'> ";//submission_data['status_code'];
               }
             },
             dataType: "json"

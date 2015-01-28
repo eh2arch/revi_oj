@@ -87,3 +87,7 @@ tr:hover
 {
 	padding: 0.5em 2em;
 }
+.title-env.title
+{
+	font-size: 3em;
+}

@@ -30,7 +30,7 @@
                                                     });
                                                 </script>
 
-                                                <table id="scoretable" class="table table-hover data-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                <table id="scoretable" class="table table-hover data-table middle-align table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
@@ -45,7 +45,7 @@
                                                         <% @user_array.each do |user| %>
                                                             <tr>
                                                                 <td class="text-primary">
-                                                                    <strong><%=user[:username]%></strong>
+                                                                    <strong style="font-size:1.2em;"><%=user[:username]%></strong>
                                                                     <span>
                                                                         <%=user[:college]%>
                                                                         <i><%=user[:email]%></i>
@@ -53,11 +53,11 @@
                                                                 </td>
                                                                 <% user[:problems].each do |problem| %>
                                                                     <% if problem[:success] %>
-                                                                        <td class="text-primary" style="background-color:green">
+                                                                        <td class="text-primary" style="background-color:rgb(12, 206, 154);color:#fff;">
                                                                             <%= ((problem[:success_time] - @contest_start_time)/60).round(2).to_s + ' + ' + (20 * problem[:wa_count]).to_s %>
                                                                         </td>
                                                                     <% else %>
-                                                                        <td class="text-primary" style="background-color:red">
+                                                                        <td class="text-primary" style="background-color:rgb(247, 93, 93);color:#fff;">
                                                                             <%= problem[:wa_count].to_s %>
                                                                         </td>
                                                                     <% end %>

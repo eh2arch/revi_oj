@@ -33,7 +33,7 @@
                                                         <% @submissions.each_with_index do |submission, index| %>
                                                             <tr>
                                                                 <td class="text-primary">
-                                                                    <strong><%=@users[index][:name]%></strong>
+                                                                    <strong style="font-size:1.2em;"><%=@users[index][:full_name]%></strong>
                                                                     <span>
                                                                         <%=@users[index][:college]%>
                                                                     </span>
@@ -48,8 +48,11 @@
                                                                     <%=image_tag("tick.png",size:"24")  %>
                                                                     <% elsif submission[:status_code] == 'WA'%>
                                                                     <%=image_tag("cross.png",size:"24")  %>
-                                                                    <% else%>
+                                                                    <% elsif submission[:status_code] == 'CE'
+                                                                         %>
                                                                     <%=image_tag("exclamation.png",size:"24")  %>
+                                                                    <% else %>
+                                                                    <%=image_tag("alert.png",size:"24")  %>
                                                                     <% end -%>
                                                                 </td>
                                                                 <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
