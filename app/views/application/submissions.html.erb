@@ -42,7 +42,12 @@
                                                                     <%=@problems[index]%>
                                                                 </td>
                                                                 <td data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
-                                                                    <%=submission[:status_code]%>
+                                                                    <% if submission[:status_code] == 'PE'%>
+                                                                    <%=image_tag("load.gif",size:"24")  %>
+                                                                    <% elsif submission[:status_code] == 'AC'%>
+                                                                    <%=image_tag("tick.png",size:"24")  %>
+                                                                    <% elsif submission[:status_code] == 'PE'%>
+                                                                    <% end -%>
                                                                 </td>
                                                                 <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
                                                                     <%=submission[:submission_time].to_time.iso8601%>
