@@ -27,6 +27,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    archive-tar-minitar (0.5.2)
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
     bootstrap-kaminari-views (0.0.5)
@@ -50,7 +51,12 @@ GEM
       railties (>= 3.2.6, < 5)
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    docker-api (1.17.0)
+      archive-tar-minitar
+      excon (>= 0.38.0)
+      json
     erubis (2.7.0)
+    excon (0.43.0)
     execjs (2.2.2)
     font-awesome-rails (4.2.0.0)
       railties (>= 3.2, < 5.0)
@@ -209,6 +215,7 @@ DEPENDENCIES
   bson
   coffee-rails (~> 4.0.0)
   devise
+  docker-api
   jbuilder (~> 2.0)
   jquery-rails
   mongo

@@ -32,6 +32,8 @@ gem 'snappconfig'
 
 gem 'bootstrap-kaminari-views'
 
+gem 'docker-api', :require => 'docker'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 # Use Uglifier as compressor for JavaScript assets
