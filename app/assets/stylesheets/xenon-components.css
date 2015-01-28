@@ -56,14 +56,34 @@ tr:hover
 	-webkit-transition:all 0.2s;
 	-moz-transition:all 0.2s;
 	-o-transition:all 0.2s;
+	border:1px solid transparent;
 }
 .subbtn:hover
 {
-	background: #40a086;
+	border-color: #394264;
+	background: transparent;
+}
+.subbtn:hover a
+{
+	color: #394264;
 }
 .subbtn a
 {
 	color: #fff;
 	text-align: center;
 	font-weight: 400;
+}
+.dataTables_filter label
+{
+	color: #000;
+	font-size: 1.1em;
+	font-family: 'Open Sans';
+}
+.dataTables_filter label input
+{
+	background: rgb(238,238,238);
+}
+.pagination
+{
+	padding: 0.5em 2em;
 }
