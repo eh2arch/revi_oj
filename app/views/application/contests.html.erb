@@ -1,6 +1,7 @@
+                
                 <div class="breadcrumb-env">
-                        <%= javascript_include_tag "flipclock.js" %>
-                        <div class="clock" style="margin:2em;"></div>
+                        
+                        
                         <ol style="width:50%;float:left;" class="breadcrumb bc-1">
                             <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
                             <li class="active"> <strong><i class="fa-reorder"></i><%= @title %></strong> </li>
@@ -8,27 +9,7 @@
                         <h4 class="subbtn"><a href="">Submissions</a></h4>
                         <h4 class="subbtn"><a href="">All Submissions</a></h4>
                 </div>
-                <script type="text/javascript">
-                    var clock;
-
-            jQuery(document).ready(function() {
-
-                // Grab the current date
-                var currentDate = new Date();
-
-                // Set some date in the future. In this case, it's always Jan 1
-                var futureDate  = new Date(currentDate.getFullYear(), 0, 30);
-
-                // Calculate the difference in seconds between the future and current date
-                var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
-
-                // Instantiate a coutdown FlipClock
-                clock = jQuery('.clock').FlipClock(diff, {
-                    clockFace: 'DailyCounter',
-                    countdown: true
-                });
-            });
-                </script>
+                
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
                         <div class="row">

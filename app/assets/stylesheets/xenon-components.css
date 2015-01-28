@@ -51,10 +51,15 @@ tr:hover
 	margin: 0 10px 5px 10px;
 	text-align: center;
 	font-weight: 400;
+	cursor: pointer;
+	transition:all 0.2s;
+	-webkit-transition:all 0.2s;
+	-moz-transition:all 0.2s;
+	-o-transition:all 0.2s;
 }
 .subbtn:hover
 {
-	background: 
+	background: #40a086;
 }
 .subbtn a
 {

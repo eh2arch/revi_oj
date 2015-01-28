@@ -1,5 +1,6 @@
 /* Get the bourbon mixin from http://bourbon.io */
 /* Reset */
+
 .flip-clock-wrapper * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -50,8 +51,9 @@
 .flip-clock-wrapper {
   text-align: center;
   position: relative;
-  width: 100%;
+  width: 40%;
   margin: 1em;
+  float: right;
 }
 
 .flip-clock-wrapper:before,
@@ -69,7 +71,7 @@
   float: left;
   margin: 2px;
   width: 50px;
-  height: 90px;
+  height: 80px;
   font-size: 50px;
   font-weight: bold;
   line-height: 67px;
