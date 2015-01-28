@@ -1,6 +1,7 @@
 
     <title><%= @title + ' | CodeCracker' %></title>
     <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic", media: "all", "data-turbolinks-track" => true %>
+    <%= stylesheet_link_tag "flipclock.css" %>
     <% if @main_content_page == true %>
         <%= stylesheet_link_tag "fonts/meteocons/css/meteocons.css" %>
     <% end %>
@@ -19,6 +20,8 @@
         <%= javascript_include_tag "codemirror/addon/hint/show-hint.js" %>
         <%= javascript_include_tag "codemirror/addon/hint/javascript-hint.js" %>
         <%= javascript_include_tag "codemirror/mode/javascript/javascript.js" %>
+        <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
         <style type="text/css">
             .CodeMirror {
               border: 1px solid #eee;

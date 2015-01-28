@@ -1,9 +1,34 @@
                 <div class="breadcrumb-env">
-                        <ol class="breadcrumb bc-1">
+                        <%= javascript_include_tag "flipclock.js" %>
+                        <div class="clock" style="margin:2em;"></div>
+                        <ol style="width:50%;float:left;" class="breadcrumb bc-1">
                             <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
                             <li class="active"> <strong><i class="fa-reorder"></i><%= @title %></strong> </li>
                         </ol>
+                        <h4 class="subbtn"><a href="">Submissions</a></h4>
+                        <h4 class="subbtn"><a href="">All Submissions</a></h4>
                 </div>
+                <script type="text/javascript">
+                    var clock;
+
+            jQuery(document).ready(function() {
+
+                // Grab the current date
+                var currentDate = new Date();
+
+                // Set some date in the future. In this case, it's always Jan 1
+                var futureDate  = new Date(currentDate.getFullYear(), 0, 30);
+
+                // Calculate the difference in seconds between the future and current date
+                var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+
+                // Instantiate a coutdown FlipClock
+                clock = jQuery('.clock').FlipClock(diff, {
+                    clockFace: 'DailyCounter',
+                    countdown: true
+                });
+            });
+                </script>
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
                         <div class="row">
@@ -19,8 +44,9 @@
                                         <div class="col-md-12">
                                             <% if @problems_hash[:data].count > 0 %>
                                                 <script type="text/javascript">
-                                                    jQuery(document).ready(function($) {
-                                                        $("#<%= @problems_hash[:ccode] %>").dataTable({
+
+                                                    jQuery(document).ready(function(jQuery) {
+                                                        jQuery("#<%= @problems_hash[:ccode] %>").dataTable({
                                                             aLengthMenu: [
                                                                 [10, 25, 50, 100, -1],
                                                                 [10, 25, 50, 100, "All"]
@@ -28,10 +54,12 @@
                                                             "bLengthChange" : false, //thought this line could hide the LengthMenu
                                                             "bInfo":false
                                                         });
+
+                                                        
                                                     });
                                                 </script>
 
-                                                <table id="<%= @problems_hash[:ccode] %>" class="table table-hover data-table middle-align table-striped table-bordered" cellspacing="0" width="100%">
+                                                <table id="<%= @problems_hash[:ccode] %>" class="table table-hover data-table middle-align table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
