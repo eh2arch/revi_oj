@@ -50,9 +50,9 @@
                                                                     <%=image_tag("cross.png",size:"24")  %>
                                                                     <% elsif submission[:status_code] == 'CE'
                                                                          %>
-                                                                    <%=image_tag("exclamation.png",size:"24")  %>
-                                                                    <% else %>
                                                                     <%=image_tag("alert.png",size:"24")  %>
+                                                                    <% else %>
+                                                                    <%=image_tag("exclamation.png",size:"24")  %>
                                                                     <% end -%>
                                                                 </td>
                                                                 <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">

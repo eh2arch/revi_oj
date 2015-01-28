@@ -21,11 +21,11 @@ jQuery(document).ready(function() {
                     img_attr='tick.png';
                 }
                 else if (submission_data == 'CE') {
-                    img_attr='exclamation.png';
+                    img_attr='alert.png';
                 }
                 else
                 {
-                    img_attr='alert.png';   
+                    img_attr='exclamation.png';   
                 }
 
                 element.setAttribute('data-status-code', submission_data['status_code']);
