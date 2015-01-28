@@ -1,0 +1,92 @@
+thead
+{
+	background: #394264;
+	color: #fff;
+}
+thead tr th
+{
+	color: #fff !important;
+}
+table
+{
+	border:none !important;
+	overflow: hidden;
+	-webkit-box-shadow: 4px 4px 17px 0px rgba(50, 50, 50, 0.24);
+-moz-box-shadow:    4px 4px 17px 0px rgba(50, 50, 50, 0.24);
+box-shadow:         4px 4px 17px 0px rgba(50, 50, 50, 0.24);
+}
+thead tr
+{
+	transform:scale(1.0) !important;
+	-webkit-transform:scale(1.0) !important;
+	-moz-transform:scale(1.0) !important;
+	-o-transform:scale(1.0) !important;
+}
+*
+{
+	font-family: 'Raleway','Open Sans', sans-serif !important;
+}
+tr
+{
+	transition:all 0.2s;
+	-webkit-transition:all 0.2s;
+	-moz-transition:all 0.2s;
+	-o-transition:all 0.2s;
+}
+tr:hover
+{
+	transform:scale(1.01);
+	-webkit-transform:scale(1.01);
+	-moz-transform:scale(1.01);
+	-o-transform:scale(1.01);
+}
+.subbtn
+{
+	padding: 0.8em;
+	border-radius: 5px;
+	background: #394264;
+	width: 10em;
+	float: right;
+	margin: 0 10px 5px 10px;
+	text-align: center;
+	font-weight: 400;
+	cursor: pointer;
+	transition:all 0.2s;
+	-webkit-transition:all 0.2s;
+	-moz-transition:all 0.2s;
+	-o-transition:all 0.2s;
+	border:1px solid transparent;
+}
+.subbtn:hover
+{
+	border-color: #394264;
+	background: transparent;
+}
+.subbtn:hover a
+{
+	color: #394264;
+}
+.subbtn a
+{
+	color: #fff;
+	text-align: center;
+	font-weight: 400;
+}
+.dataTables_filter label
+{
+	color: #000;
+	font-size: 1.1em;
+	font-family: 'Open Sans';
+}
+.dataTables_filter label input
+{
+	background: rgb(238,238,238);
+}
+.pagination
+{
+	padding: 0.5em 2em;
+}
+.title-env.title
+{
+	font-size: 3em;
+}
