@@ -5,6 +5,8 @@ class ProcessSubmission
   sidekiq_options unique: true, :queue => :default, :retry => 5
   require 'scanf'
 
+Docker::API_VERSION = '1.11.2'
+
   def perform(args)
   	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
   	submission_id = args["submission_id"]
