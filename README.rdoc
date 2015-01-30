@@ -27,7 +27,29 @@ Things you may want to cover:
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.
 
+install docker
+
+install redis server
+
+run
+redis-cli FLUSHALL; bundle exec sidekiq -C config/sidekiq.yml -d
+
+
+
 sudo vi /etc/default/docker.io
 add path
+DOCKER="/usr/bin/docker.io"
 
-edit using this https://devlearnings.wordpress.com/2014/08/22/limiting-fork-bomb-in-docker/
+create image archit/codecracker
+add python, gcc, g++, and java
+
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker.io restart
+
+run sudo docker -d
+
+newgrp docker or logout and then login
+
+create folder codecracker_v4 at /usr/local/bin
+do chmod -R a+w codecracker_v4
