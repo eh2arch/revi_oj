@@ -1,7 +1,7 @@
                 <div class="breadcrumb-env">
                         <ol class="breadcrumb bc-1">
-                            <li> <a href="../../dashboard/variant-1/index.html"><i class="fa-home"></i>Home</a> </li>
-                            <li class="active"> <strong><%= @title %></strong> </li>
+                            <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
+                            <li class="active"> <a href="/submissions"><i class="fa-graduation-cap"></i><%= @title %> </a> </li>
                         </ol>
                 </div>
                 <div class="row">
@@ -47,8 +47,10 @@
                                                                 <td class="text-primary">
                                                                     <strong style="font-size:1.2em;"><%=user[:username]%></strong>
                                                                     <span>
+                                                                        <i>
                                                                         <%=user[:college]%>
-                                                                        <i><%=user[:email]%></i>
+                                                                         <%#=user[:email]%>
+                                                                        </i>
                                                                     </span>
                                                                 </td>
                                                                 <% user[:problems].each do |problem| %>

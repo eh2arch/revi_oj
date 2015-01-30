@@ -27,19 +27,20 @@ class ApplicationController < ActionController::Base
   end
 
   def contests
-    contest_code = params[:ccode]
-    contest = Contest.where( ccode: contest_code, state: true, start_time: { :$lte => DateTime.now } ).first
+    @contest_code = params[:ccode]
+    contest = Contest.where( ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } ).first
     if contest.nil?
       redirect_to controller: 'error', action: 'error_404' and return
     end
     @main_content_page = true
     @contest_page = true
+    @contest_end_time = contest[:end_time]
     @title = contest[:name]
     @description = "Problems and rules for " + @title
     problems = contest.problems.where({ state: true }).order_by({ submissions_count: -1 })
     language_array = []
     problems.each { |problem| language_array << get_language_parameter(problem, 'name') }
-    @problems_hash = { data: problems, name: "Problems for " + contest[:name], panel_color: "purple", ccode: contest_code, langdata: language_array }
+    @problems_hash = { data: problems, name: "Problems for " + contest[:name], panel_color: "purple", ccode: @contest_code, langdata: language_array }
   end
 
   def get_language_parameter(collection ,parameter)
@@ -92,14 +93,14 @@ class ApplicationController < ActionController::Base
     unless latest_submission.nil?
       if DateTime.now.to_time - latest_submission[:created_at] < 30
         @notif_quick_submit = true
-        home and render action: 'home'
+        scoreboard and render action: 'scoreboard', ccode: contest_code
         return
       end
     end
     source_limit = problem[:source_limit]
     if user_source_code.length > source_limit
         @notif_source_limit_exceed = true
-        home and render action: 'home'
+        scoreboard and render action: 'scoreboard', ccode: contest_code
         return
     end
     submission = Submission.new(user_source_code: user_source_code, submission_time: DateTime.now)
@@ -115,7 +116,7 @@ class ApplicationController < ActionController::Base
     ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
 
     @notif_submission_success = true
-    home and render action: 'home'
+    scoreboard and render action: 'scoreboard', ccode: contest_code
     return
   end
 

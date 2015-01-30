@@ -1,15 +1,15 @@
-                
+
                 <div class="breadcrumb-env">
-                        
-                        
+
+
                         <ol style="width:50%;float:left;" class="breadcrumb bc-1">
                             <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
                             <li class="active"> <strong><i class="fa-reorder"></i><%= @title %></strong> </li>
                         </ol>
-                        <h4 class="subbtn"><a href="">Submissions</a></h4>
-                        <h4 class="subbtn"><a href="">All Submissions</a></h4>
+                        <h4 class="subbtn"><a href="/submissions/<%=@contest_code%>">Submissions</a></h4>
+                        <h4 class="subbtn"><a href="/submissions">All Submissions</a></h4>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-<%= @clarifications.nil? ? 12 : 8 %>">
                         <div class="row">
@@ -36,7 +36,7 @@
                                                             "bInfo":false
                                                         });
 
-                                                        
+
                                                     });
                                                 </script>
 
