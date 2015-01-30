@@ -2,10 +2,10 @@ class ProcessSubmission
 
   include Process
   include Sidekiq::Worker
-  sidekiq_options unique: true, :queue => :default, :retry => 5
+  sidekiq_options unique: true, :queue => :default#, :retry => 5
   require 'scanf'
 
-Docker::API_VERSION = '1.11.2'
+  Docker::API_VERSION = '1.11.2'
 
   def perform(args)
   	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
@@ -45,78 +45,129 @@ Docker::API_VERSION = '1.11.2'
       return
     end
 
-  	signal_list = Signal.list.invert
+    signal_list = Signal.list.invert
 
-  	test_cases = problem.test_cases
-  	@test_case_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/"
-  	@test_case_output_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/"
+    test_cases = problem.test_cases
+    @test_case_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/"
+    @test_case_output_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/"
 
-  	total_running_time = 0
+    total_running_time = 0
 
-  	test_cases.each do |test_case|
-  		time_start = Time.now()
+    test_cases.each do |test_case|
+
       if langcode == 'python'
-        pid = spawn({"SHELL" => "/bin/bash"}, "python #{@submission_path}user_source_code#{file_extensions[langcode]}", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+        command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       elsif langcode == 'java'
-          pid = spawn({"SHELL" => "/bin/bash"}, "java -cp #{@submission_path} Main", :rlimit_rss => [1572864000,1572864000], :rlimit_stack => [1572864000,1572864000], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+        command = "java -cp /submission/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       else
-    		pid = spawn({"SHELL" => "/bin/bash"}, "#{@submission_path}compiled_code", :rlimit_rss => [mlimit,mlimit], :rlimit_stack => [mlimit,mlimit], :rlimit_cpu => [tlimit + 1,tlimit + 1], :rlimit_fsize => [50000000,50000000], :out => "#{@submission_path}#{test_case[:name]}", :in => "#{@test_case_path}#{test_case[:name]}")
+        command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       end
-  		pid_new = status = max_memory_used = 0
-  		error_flag = nil
 
-  		loop do
-	  		begin
-		  		pid_new, status = wait2(pid, Process::WNOHANG)
-		  		if status.nil? || pid_new.nil?
-		  			memory_used = get_memory_usage(pid)
-		  			max_memory_used = [max_memory_used, memory_used].max
-		  			if max_memory_used > mlimit
-		  				error_flag = 'MLE'
-		  			elsif Time.now() - time_start > tlimit
-		  				error_flag = 'TLE'
-		  			end
-		  		else
-		  			if status.exited? && status.exitstatus.to_i != 0
-		  				if signal_list.has_key?(status.exitstatus.to_i)
-		  					error_flag = signal_list[status.exitstatus.to_i]
-		  				else
-		  					error_flag = 'RTE'
-		  				end
-		  			elsif status.exited? && status.exitstatus.to_i == 0
-		  				break
-		  			end
-		  		end
-	  			unless error_flag.nil?
+      container = Docker::Container.create('Cmd' => ["bash", "-c", command], 'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
+
+      container_id = container.json["ID"]
+
+      time_start = Time.now()
+
+      container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
+      keep_running_flag = true
+
+      while container.json["State"]["Running"]
+        begin
+
+          if container.top.length < 2 then
+            next
+          end
+
+          pid = container.top[1]["PID"].to_i
+          pid_new = status = max_memory_used = 0
+          error_flag = nil
+
+          begin
+            memory_used = get_memory_usage(pid)
+          rescue
+            memory_used = 0
+          end
+          max_memory_used = [max_memory_used, memory_used].max
+          if max_memory_used > mlimit
+            error_flag = 'MLE'
+          elsif container.json["State"]["Running"] && Time.now() - DateTime.parse(container.json["State"]["StartedAt"]).to_time > tlimit
+            error_flag = 'TLE'
+          end
+          unless error_flag.nil?
             begin
-  	  				Process.kill('KILL', pid)
-  	  				break
+              begin
+                container = Docker::Container.get(container_id)
+                container.kill
+              rescue
+                Process.kill('KILL', pid)
+              end
+              submission = get_submission(submission_id)
+              if submission.nil?
+                return
+              end
+              submission.update_attributes!( status_code: error_flag, error_description: error_flag )
+              return
             rescue Errno::ESRCH => e
               break
             end
-	  			end
-		  	rescue Errno::ECHILD => e
-		  	end
-		  end
-		  if error_flag.nil?
-			  running_time = Time.now() - time_start
-			  total_running_time += running_time
-			else
-		  	submission = get_submission(submission_id)
-		  	if submission.nil?
-		  		return
-		  	end
-				submission.update_attributes!( status_code: error_flag, error_description: error_flag )
-				return
-			end
+          end
+        rescue
+        end
+      end
+
+      if error_flag.nil?
+        begin
+          container = Docker::Container.get(container_id)
+          exit_code = container.json["State"]["ExitCode"].to_i
+          if exit_code != 0
+            if signal_list.has_key?(status.exitstatus.to_i)
+              error_flag = 'SIG' + signal_list[status.exitstatus.to_i]
+            else
+              error_flag = 'RTE'
+            end
+            submission = get_submission(submission_id)
+            if submission.nil?
+              begin
+                  container = Docker::Container.get(container_id)
+                  container.delete(:force => true)
+              rescue
+              end
+              return
+            end
+            submission.update_attributes!( status_code: error_flag, error_description: error_flag )
+            return
+          else
+            begin
+              running_time = DateTime.parse(container.json["State"]["FinishedAt"]).to_time - DateTime.parse(container.json["State"]["StartedAt"]).to_time
+            rescue
+              running_time = Time.now() - time_start
+            end
+            total_running_time += running_time
+          end
+        rescue
+          container = nil
+        end
+      end
 
 	  	unless test_case[:checker_is_a_code]
 		  	submission = get_submission(submission_id)
 		  	if submission.nil?
+          begin
+              container = Docker::Container.get(container_id)
+              container.delete(:force => true)
+          rescue
+          end
 		  		return
 		  	end
 	  		if !check_solution(test_case)
 	  			submission.update_attributes!( status_code: "WA", error_description: "WA" )
+          begin
+              container = Docker::Container.get(container_id)
+              container.delete(:force => true)
+          rescue
+          end
+          return
 	  		end
 	  	end
 
