@@ -8,7 +8,7 @@ config.action_mailer.smtp_settings = {
   domain: "gmail.com",
   authentication: "plain",
   enable_starttls_auto: true,
-  user_name: "arch.srivastava.2@gmail.com",
+  user_name: "archonlinej@gmail.com",
   password: ""
 }
 
