@@ -21,6 +21,8 @@ class TestCase
 	test_case_output = File.open("#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/#{self[:name]}", 'w')
 	test_case_output.write(self[:test_case_output])
 	test_case_output.close
+    self[:test_case] = ""
+    self[:test_case_output] = ""
     return true
   end
 end

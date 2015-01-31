@@ -1,7 +1,7 @@
                 <div class="breadcrumb-env">
                         <ol class="breadcrumb bc-1">
                             <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
-                            <li class="active"> <a href="/submissions"><i class="fa-graduation-cap"></i><%= @title %> </a> </li>
+                            <li class="active"> <a href="#"><i class="fa-graduation-cap"></i><%= @title %> </a> </li>
                         </ol>
                 </div>
                 <div class="row">
@@ -33,6 +33,7 @@
                                                 <table id="scoretable" class="table table-hover data-table middle-align table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
+                                                            <th>#</th>
                                                             <th>Name</th>
                                                             <% @problems.each do |problem| %>
                                                                 <th><%=problem[:name]%></th>
@@ -42,8 +43,11 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <% @user_array.each do |user| %>
+                                                        <% @user_array.each_with_index do |user, index| %>
                                                             <tr>
+                                                                <td class="text-primary">
+                                                                    <%=index + 1%>
+                                                                </td>
                                                                 <td class="text-primary">
                                                                     <strong style="font-size:1.2em;"><%=user[:username]%></strong>
                                                                     <span>
@@ -59,15 +63,15 @@
                                                                             <%= ((problem[:success_time] - @contest_start_time)/60).round(2).to_s + ' + ' + (20 * problem[:wa_count]).to_s %>
                                                                         </td>
                                                                     <% else %>
-                                                                        <td class="text-primary" style="background-color:rgb(247, 93, 93);color:#fff;">
-                                                                            <%= problem[:wa_count].to_s %>
+                                                                        <td class="text-primary" <% if problem[:wa_count].to_i > 0 %>style="background-color:rgb(247, 93, 93);color:#fff;" <% end %> >
+                                                                            <%= problem[:wa_count].to_s if problem[:wa_count].to_i > 0 %>
                                                                         </td>
                                                                     <% end %>
                                                                 <% end %>
                                                                 <td class="text-primary">
                                                                     <%=user[:total_time].round(2)%>
                                                                 </td>
-                                                                <td>
+                                                                <td class="text-primary">
                                                                     <%=user[:successes]%>
                                                                 </td>
                                                             </tr>

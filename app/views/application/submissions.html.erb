@@ -33,26 +33,31 @@
                                                         <% @submissions.each_with_index do |submission, index| %>
                                                             <tr>
                                                                 <td class="text-primary">
-                                                                    <strong style="font-size:1.2em;"><%=@users[index][:full_name]%></strong>
+                                                                    <strong style="font-size:1.2em;"><%=@users[index][:username]%></strong>
                                                                     <span>
                                                                         <%=@users[index][:college]%>
                                                                     </span>
                                                                 </td>
                                                                 <td class="text-primary">
-                                                                    <%=@problems[index]%>
+                                                                    <strong><a href="/contests/<%=@contest_code + "/" + @problems[index]%>"><%=@problems[index]%></a></strong>
                                                                 </td>
                                                                 <td data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
                                                                     <% if submission[:status_code] == 'PE'%>
-                                                                    <%=image_tag("load.gif",size:"24")  %>
+                                                                    <%=image_tag("load.gif", size:"24")  %>
                                                                     <% elsif submission[:status_code] == 'AC'%>
-                                                                    <%=image_tag("tick.png",size:"24")  %>
+                                                                    <%=image_tag("tick.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
+                                                                    <br /><br /><span><i><b> <%=submission[:running_time].round(2)%> </b></i></span>
                                                                     <% elsif submission[:status_code] == 'WA'%>
-                                                                    <%=image_tag("red-cross.png",size:"24")  %>
+                                                                    <%=image_tag("red-cross.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
+                                                                    <% elsif submission[:status_code] == 'TLE'
+                                                                         %>
+                                                                    <%=image_tag("clock.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code]})  %>
                                                                     <% elsif submission[:status_code] == 'CE'
                                                                          %>
-                                                                    <%=image_tag("alert.png",size:"24")  %>
+                                                                    <%=image_tag("alert.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code]})  %>
                                                                     <% else %>
-                                                                    <%=image_tag("exclamation.png",size:"24")  %>
+                                                                    <%=image_tag("exclamation.png",size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
+                                                                    <br /><br /><span><i><b> <%=submission[:error_description]%> </b></i></span>
                                                                     <% end -%>
                                                                 </td>
                                                                 <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">

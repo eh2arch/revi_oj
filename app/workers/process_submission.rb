@@ -160,7 +160,7 @@ class ProcessSubmission
           end
 		  		return
 		  	end
-	  		if !check_solution(test_case)
+	  		if !check_solution_through_diff(test_case)
 	  			submission.update_attributes!( status_code: "WA", error_description: "WA" )
           begin
               container = Docker::Container.get(container_id)
@@ -196,6 +196,17 @@ class ProcessSubmission
 	  	end
 		end
 		return data + stack
+  end
+
+  def check_solution_through_diff(test_case)
+    user_solution_path = @submission_path + test_case[:name]
+    test_case_solution_path = @test_case_output_path + test_case[:name]
+    diff = %x(diff -ZbB #{user_solution_path} #{test_case_solution_path})
+    puts diff
+    if diff.length > 0
+      return false
+    end
+    return true
   end
 
   def check_solution(test_case)

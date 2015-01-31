@@ -83,7 +83,45 @@
 		                	data["language"] = mode_dom_element.options[mode_dom_element.selectedIndex].text.toLowerCase();
 		                	data["pcode"] = "<%= @problem_code %>";
 		                	data["ccode"] = "<%= @contest_code %>";
-		                	window.location.href = "../../submit?" + jQuery.param(data);
+		                	data["authenticity_token"] = "<%= form_authenticity_token %>";
+		                	// window.location.href = "../../submit?" + jQuery.param(data);
+
+							var form = document.createElement("form");
+							    user_source_code = document.createElement("textarea");
+							    language = document.createElement("input");
+							    pcode = document.createElement("input");
+							    ccode = document.createElement("input");
+							    authenticity_token = document.createElement("input");
+								authenticity_token.name = "authenticity_token";
+							    authenticity_token.value = "<%= form_authenticity_token %>";
+							    authenticity_token.type = "hidden";
+							form.action = "/scoreboard/" + data["ccode"];
+							form.method = "post"
+
+							user_source_code.name = "user_source_code";
+							language.name = "language";
+							pcode.name = "pcode";
+							ccode.name = "ccode";
+
+							user_source_code.value = data["user_source_code"];
+							language.value = data["language"];
+							pcode.value = data["pcode"];
+							ccode.value = data["ccode"];
+
+							user_source_code.rows = 100000000000;
+							user_source_code.cols = 100000000000;
+
+							form.appendChild(user_source_code);
+							form.appendChild(language);
+							form.appendChild(pcode);
+							form.appendChild(ccode);
+							form.appendChild(authenticity_token);
+
+							document.body.appendChild(form);
+							console.log(data["user_source_code"]);
+							console.log(user_source_code.value);
+							// console.log(jQuery("form").serialize());
+							form.submit();
 		                });
                     });
                 </script>

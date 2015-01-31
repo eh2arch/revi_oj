@@ -193,7 +193,7 @@ class ApplicationController < ActionController::Base
     @problems = []
     @submissions.each do |submission|
       user = submission.user
-      @users << { name: user[:name], college: user[:college] }
+      @users << { name: user[:full_name], college: user[:college], username: user[:username] }
       @problems << submission.problem[:pcode]
     end
   end
@@ -205,7 +205,7 @@ class ApplicationController < ActionController::Base
     end
     respond_to do |format|
       format.html
-      format.json { render json: { status_code: submission[:status_code] } }
+      format.json { render json: { status_code: submission[:status_code], description: submission[:error_description], running_time: submission[:running_time] } }
     end
   end
 
