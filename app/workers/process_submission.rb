@@ -58,7 +58,7 @@ class ProcessSubmission
       if langcode == 'python'
         command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       elsif langcode == 'java'
-        command = "java -cp /submission/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
+        command = "java -cp /submission/Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       else
         command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       end
