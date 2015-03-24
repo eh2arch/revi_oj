@@ -21,6 +21,7 @@ CodecrackerV4::Application.routes.draw do
   get 'submissions' => 'application#submissions'
   get 'submissions/:ccode' => 'application#submissions'
   get 'get_submission_data' => 'application#get_submission_data'
+  get 'rejudge' => 'application#rejudge'
 
   # You can have the root of your site routed with "root"
 
