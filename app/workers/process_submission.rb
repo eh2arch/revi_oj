@@ -53,7 +53,8 @@ class ProcessSubmission
 
     total_running_time = 0
 
-    test_cases.each do |test_case|
+    test_cases.each_with_index do |test_case, index|
+      # puts index + 1
 
       if langcode == 'python'
         command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
@@ -63,7 +64,13 @@ class ProcessSubmission
         command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       end
 
+      memory_specification = 536870912
+      if langcode == 'java'
+        memory_specification = 1677721600
+      end
+      # puts 'container create'
       container = Docker::Container.create('Cmd' => ["bash", "-c", command], 'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
+      # puts 'container created'
 
       container_id = container.json["ID"]
 
@@ -71,6 +78,8 @@ class ProcessSubmission
 
       container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
       keep_running_flag = true
+
+      # puts "came here\n\n"
 
       while container.json["State"]["Running"]
         begin
@@ -89,16 +98,21 @@ class ProcessSubmission
             memory_used = 0
           end
           max_memory_used = [max_memory_used, memory_used].max
-          if max_memory_used > mlimit
+          # puts max_memory_used.to_s + " memory used"
+          if langcode != 'java' && max_memory_used > mlimit
+            # puts 'came to memory shit'
             error_flag = 'MLE'
           elsif container.json["State"]["Running"] && Time.now() - DateTime.parse(container.json["State"]["StartedAt"]).to_time > tlimit
+            # puts 'tle'
             error_flag = 'TLE'
           end
           unless error_flag.nil?
             begin
               begin
                 container = Docker::Container.get(container_id)
+                # puts 'kill st'
                 container.kill
+                # puts 'kill end'
               rescue
                 Process.kill('KILL', pid)
               end
@@ -202,7 +216,7 @@ class ProcessSubmission
     user_solution_path = @submission_path + test_case[:name]
     test_case_solution_path = @test_case_output_path + test_case[:name]
     diff = %x(diff -ZbB #{user_solution_path} #{test_case_solution_path})
-    puts diff
+    # puts diff
     if diff.length > 0
       return false
     end
