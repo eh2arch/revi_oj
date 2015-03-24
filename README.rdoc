@@ -53,3 +53,5 @@ newgrp docker or logout and then login
 
 create folder codecracker_v4 at /usr/local/bin
 do chmod -R a+w codecracker_v4
+
+To remove docker instances docker rm -f $(docker ps -aq)
