@@ -36,7 +36,7 @@ class Users::SessionsController < Devise::SessionsController
   def destroy
     signed_out = (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
     message = I18n.t 'devise.sessions.signed_out'
-    redirect_to(root_path)
+    redirect_to("/users/sign_in")
     flash[:notice] = message
     # if request.xhr?
      # redirect_to root_path

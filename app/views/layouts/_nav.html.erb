@@ -25,6 +25,11 @@
                             <strong><%=current_user[:full_name]%></strong>
                         </span>
                     </a>
+                    <ul class="dropdown-menu user-profile-menu list-unstyled">
+                        <li class="last">
+                            <%= link_to('<i class="fa-lock"></i> Logout'.html_safe, destroy_user_session_path, method: :delete) %>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
