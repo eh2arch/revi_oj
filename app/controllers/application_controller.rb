@@ -209,4 +209,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def rejudge
+    submission = Submission.where(_id: params['submission_id']).first
+    unless submission.nil?
+      if current_user.role
+        submission.update_attributes!( status_code: "PE" )
+        ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
+      end
+    end
+  end
+
 end

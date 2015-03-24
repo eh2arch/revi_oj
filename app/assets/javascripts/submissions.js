@@ -42,8 +42,25 @@ jQuery(document).ready(function() {
         });
     }
 
+    jQuery(".rejudge_submission").click(function(){
+        rejudge_submission(this.getAttribute('data-submission-id'));
+        img_attr = "load.gif";
+        this.innerHTML = " <img src='/assets/" + img_attr + "' height='24' width='24' /> ";
+    });
+
+    function rejudge_submission(submission_id) {
+        jQuery.ajax(
+        {
+            url: "/rejudge",
+            data: { "submission_id": submission_id },
+            dataType: "json"
+        });
+    }
+
     pending_elements = jQuery("td[data-status-code='PE'");
     for (i = 0; i < pending_elements.size(); i++) {
         get_submission_data(pending_elements[i], pending_elements[i].getAttribute('data-submission-id'));
     }
+
+
 });
