@@ -46,6 +46,9 @@ class ProcessSubmission
     end
 
     signal_list = Signal.list.invert
+    signal_list_new = {}
+    signal_list.each { |i,j| signal_list_new.merge!({ i + 128 => j }) }
+    signal_list.merge!(signal_list_new)
 
     test_cases = problem.test_cases
     @test_case_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/"
@@ -83,7 +86,6 @@ class ProcessSubmission
 
       while container.json["State"]["Running"]
         begin
-
           if container.top.length < 2 then
             next
           end
@@ -135,8 +137,8 @@ class ProcessSubmission
           container = Docker::Container.get(container_id)
           exit_code = container.json["State"]["ExitCode"].to_i
           if exit_code != 0
-            if signal_list.has_key?(status.exitstatus.to_i)
-              error_flag = 'SIG' + signal_list[status.exitstatus.to_i]
+            if signal_list.has_key?(exit_code)
+              error_flag = 'SIG' + signal_list[exit_code]
             else
               error_flag = 'RTE'
             end
