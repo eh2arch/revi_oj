@@ -20,6 +20,10 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-12">
+                                        <% if current_user.role =="admin" %>
+                                        <div class="btn btn-success rejudge_page"> Rejudge</div>
+                                        <div class="btn btn-success rejudge_all"> Rejudge All </div>
+                                        <%end%>
                                                 <table id="scoretable" class="table table-hover middle-align table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
@@ -44,7 +48,7 @@
                                                                 <td class="text-primary">
                                                                     <strong><a href="#"><%=@problems[index]%></a></strong>
                                                                 </td>
-                                                                <td data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
+                                                                <td class="submission_img" data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
                                                                     <% if submission[:status_code] == 'PE'%>
                                                                     <%=image_tag("load.gif", size:"24")  %>
                                                                     <% elsif submission[:status_code] == 'AC'%>
