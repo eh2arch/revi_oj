@@ -9,6 +9,8 @@ class Contest
   field :state, 				 type: Boolean, default: true
 
   belongs_to :creator, :counter_cache => true
+  has_many :clarifications, :dependent => :destroy
+  accepts_nested_attributes_for :clarifications, :allow_destroy => true
 
   has_and_belongs_to_many :users
   has_many :problems

@@ -5,6 +5,10 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to main_app.root_path, :alert => exception.message
+  end
+
   before_filter :authenticate_user!
 
   def home
@@ -12,7 +16,7 @@ class ApplicationController < ActionController::Base
     @home_page = true
     @title = "Contests"
     @description = "See the ongoing, upcoming and past contests"
-    @clarifications = clarifications
+    
     upcoming_contests = Contest.where({ start_time: { :$gt => DateTime.now } })
     ongoing_contests = Contest.where({ start_time: { :$lte => DateTime.now }, end_time: { :$gte => DateTime.now } })
     past_contests = Contest.where({ end_time: { :$lt => DateTime.now } })
@@ -37,6 +41,11 @@ class ApplicationController < ActionController::Base
     @contest_end_time = contest[:end_time]
     @title = contest[:name]
     @description = "Problems and rules for " + @title
+    @count= contest.clarifications.count
+    if(contest.clarifications.count>0)
+    @clarifications = contest.clarifications
+    else  @clarifications= nil
+    end
     problems = contest.problems.where({ state: true }).order_by({ submissions_count: -1 })
     language_array = []
     problems.each { |problem| language_array << get_language_parameter(problem, 'name') }
@@ -216,11 +225,12 @@ class ApplicationController < ActionController::Base
   def rejudge
     submission = Submission.where(_id: params['submission_id']).first
     unless submission.nil?
-      if current_user.role
+      if current_user.role == "admin"
         submission.update_attributes!( status_code: "PE" )
         ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
       end
     end
+    render :nothing => true
   end
 
 end

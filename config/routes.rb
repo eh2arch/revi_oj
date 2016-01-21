@@ -5,7 +5,10 @@ CodecrackerV4::Application.routes.draw do
 
   devise_for :users, :controllers => {:sessions => 'users/sessions', :registrations => 'users/registrations'}
   require 'sidekiq/web'
-  mount Sidekiq::Web => '/sidekiq'
+  authenticate :user, lambda { |u| u.role == "admin" } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
+  
 
   root :to => 'application#home'
 

@@ -5,7 +5,7 @@ class ProcessSubmission
   sidekiq_options unique: true, :queue => :default, :retry => 5
   require 'scanf'
 
-  Docker::API_VERSION = '1.11.2'
+  #Docker::API_VERSION = '1.11.2'
 
   def perform(args)
   	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
@@ -72,9 +72,9 @@ class ProcessSubmission
         memory_specification = 1677721600
       end
       # puts 'container create'
-      container = Docker::Container.create('Cmd' => ["bash", "-c", command], 'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
-      # puts 'container created'
-
+      container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
+       # puts 'container created'
+       
       container_id = container.json["ID"]
 
       time_start = Time.now()

@@ -98,7 +98,13 @@
                                 </div>
                             </div>
                             <div class="panel-body">
-                                <p>Fat far.</p>
+                                <%if @clarifications!=nil %>
+                                    <% @clarifications.each do |clarification| %>
+                                    <ul>
+                                        <li> <h5><%=clarification[:entry] %></h5></li>
+                                    </ul>
+                                    <%end%>
+                                <%end%>
                             </div>
                         </div>
                     </div>
