@@ -22,7 +22,6 @@ class ProcessSubmission
   	tlimit = problem[:time_limit] * submission.language[:time_multiplier]
   	mlimit = problem[:memory_limit]
   	@submission_path = "#{CONFIG[:base_path]}/#{user_email}/#{ccode}/#{pcode}/#{submission_id}/"
-    @check_path = "#{CONFIG[:base_path]}/check"
 
   	if langcode == 'c++'
   		compile_path = "bash -c 'g++ -std=c++0x -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
@@ -61,37 +60,39 @@ class ProcessSubmission
       # puts index + 1
 
       if langcode == 'python'
-        command = "python #{@submission_path}user_source_code#{file_extensions[langcode]} < #{@test_case_path}#{test_case[:name]} > #{@submission_path}#{test_case[:name]}"
+        command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       elsif langcode == 'java'
-        command = "java -cp #{@submission_path} Main < #{@test_case_path}#{test_case[:name]} > #{@submission_path}#{test_case[:name]}"
+        command = "java -cp /submission/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       else
-        command = "#{@submission_path}compiled_code < #{@test_case_path}#{test_case[:name]} > #{@submission_path}#{test_case[:name]}"
+        command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       end
 
       memory_specification = 536870912
       if langcode == 'java'
         memory_specification = 1677721600
       end
-      # puts 'container create'
-      # container = Docker::Container.create('Cmd' => ["bash", "-c", command], 'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
-      # puts 'container created'
+      puts 'container create'
+      container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
+       puts 'container created'
+       
+      container_id = container.json["ID"]
 
-      # container_id = container.json["ID"]
       time_start = Time.now()
-      pid = spawn("#{@check_path}/sandbox #{command}", :rlimit_rss => [25000,25000], :rlimit_stack => [25000,25000], :rlimit_cpu => [1,1], :rlimit_fsize => [50000000,50000000])
 
-      # container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
+      container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
       keep_running_flag = true
-      pr = File.read("/proc/#{pid}/status")
+
       # puts "came here\n\n"
-      pid_new=0, status=0
-      error_flag = nil
 
-      loop do
+      while container.json["State"]["Running"]
         begin
+          if container.top.length < 2 then
+            next
+          end
 
+          pid = container.top[1]["PID"].to_i
           pid_new = status = max_memory_used = 0
-          
+          error_flag = nil
 
           begin
             memory_used = get_memory_usage(pid)
@@ -103,15 +104,19 @@ class ProcessSubmission
           if langcode != 'java' && max_memory_used > mlimit
             # puts 'came to memory shit'
             error_flag = 'MLE'
-          elsif time_start && Time.now() - time_start > tlimit
+          elsif container.json["State"]["Running"] && Time.now() - DateTime.parse(container.json["State"]["StartedAt"]).to_time > tlimit
             # puts 'tle'
             error_flag = 'TLE'
           end
           unless error_flag.nil?
             begin
               begin
-                 Process.kill('KILL', pid)
-              rescue nil
+                container = Docker::Container.get(container_id)
+                # puts 'kill st'
+                container.kill
+                # puts 'kill end'
+              rescue
+                Process.kill('KILL', pid)
               end
               submission = get_submission(submission_id)
               if submission.nil?
@@ -123,18 +128,14 @@ class ProcessSubmission
               break
             end
           end
-          begin
-            pid_new, status = wait2(pid, Process::WNOHANG)
-          rescue Errno::ECHILD =>e
-          end
-          break if !pid_new.nil?
         rescue
         end
       end
 
       if error_flag.nil?
         begin
-        exit_code = status.exitstatus
+          container = Docker::Container.get(container_id)
+          exit_code = container.json["State"]["ExitCode"].to_i
           if exit_code != 0
             if signal_list.has_key?(exit_code)
               error_flag = 'SIG' + signal_list[exit_code]
@@ -144,7 +145,8 @@ class ProcessSubmission
             submission = get_submission(submission_id)
             if submission.nil?
               begin
-                Process.kill("KILL",pid)
+                  container = Docker::Container.get(container_id)
+                  container.delete(:force => true)
               rescue
               end
               return
@@ -153,12 +155,14 @@ class ProcessSubmission
             return
           else
             begin
+              running_time = DateTime.parse(container.json["State"]["FinishedAt"]).to_time - DateTime.parse(container.json["State"]["StartedAt"]).to_time
+            rescue
               running_time = Time.now() - time_start
-            rescue nil
             end
             total_running_time += running_time
           end
         rescue
+          container = nil
         end
       end
 
@@ -166,7 +170,8 @@ class ProcessSubmission
 		  	submission = get_submission(submission_id)
 		  	if submission.nil?
           begin
-              Process.kill("KILL",pid)
+              container = Docker::Container.get(container_id)
+              container.delete(:force => true)
           rescue
           end
 		  		return
@@ -174,12 +179,14 @@ class ProcessSubmission
 	  		if !check_solution_through_diff(test_case)
 	  			submission.update_attributes!( status_code: "WA", error_description: "WA" )
           begin
-             Process.kill("KILL",pid)
+              container = Docker::Container.get(container_id)
+              container.delete(:force => true)
           rescue
           end
           return
 	  		end
 	  	end
+
   	end
 
   	submission = get_submission(submission_id)
