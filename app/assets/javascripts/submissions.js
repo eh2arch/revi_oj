@@ -13,10 +13,11 @@ jQuery(document).ready(function() {
                 }, 3000);
               }
               else {
-                var img_attr = null, tooltip = '';
+                var img_attr = null, tooltip = '', status_description = submission_data['description'];
                 if(submission_data['status_code'] == 'AC'){
                     img_attr = 'tick.png';
                     tooltip = submission_data['running_time'];
+                    status_description = Math.round(tooltip * 100) / 100;
                 }
                 else if (submission_data['status_code'] == 'WA'){
                     img_attr = 'red-cross.png';
@@ -35,7 +36,7 @@ jQuery(document).ready(function() {
                 }
 
                 element.setAttribute('data-status-code', submission_data['status_code']);
-                element.innerHTML = " <img src='/assets/" + img_attr + "' height='24' width='24' data-toggle='tooltip' data-placement='bottom' title='" + submission_data['status_code'] + "' data-original-title='" + Math.round(tooltip * 100) / 100 + "' > <br /><br /> <span><i><b>" + Math.round(tooltip * 100) / 100 + "</b></i></span>";
+                element.innerHTML = " <img src='/assets/" + img_attr + "' height='24' width='24' data-toggle='tooltip' data-placement='bottom' title='" + submission_data['status_code'] + "' data-original-title='" + status_description + "' > <br /><br /> <span><i><b>" + status_description + "</b></i></span>";
               }
             },
             dataType: "json"

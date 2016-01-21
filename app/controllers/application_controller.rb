@@ -203,9 +203,13 @@ class ApplicationController < ActionController::Base
     if submission.nil?
       redirect_to controller: 'error', action: 'error_404' and return
     end
+
+    running_time = nil
+    running_time = submission[:running_time] if submission[:status_code] == "AC"
+
     respond_to do |format|
       format.html
-      format.json { render json: { status_code: submission[:status_code], description: submission[:error_description], running_time: submission[:running_time] } }
+      format.json { render json: { status_code: submission[:status_code], description: submission[:error_description], running_time: running_time } }
     end
   end
 
