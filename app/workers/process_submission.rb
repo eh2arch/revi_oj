@@ -71,9 +71,9 @@ class ProcessSubmission
       if langcode == 'java'
         memory_specification = 1677721600
       end
-      puts 'container create'
+      # puts 'container create'
       container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
-       puts 'container created'
+       # puts 'container created'
        
       container_id = container.json["ID"]
 

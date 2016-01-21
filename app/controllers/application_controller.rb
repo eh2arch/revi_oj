@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def clarifications
-    return true
+    return nil
   end
 
   def contests
@@ -41,7 +41,11 @@ class ApplicationController < ActionController::Base
     @contest_end_time = contest[:end_time]
     @title = contest[:name]
     @description = "Problems and rules for " + @title
-    @clarifications = clarifications
+    @count= contest.clarifications.count
+    if(contest.clarifications.count>0)
+    @clarifications = contest.clarifications
+    else  @clarifications= nil
+    end
     problems = contest.problems.where({ state: true }).order_by({ submissions_count: -1 })
     language_array = []
     problems.each { |problem| language_array << get_language_parameter(problem, 'name') }
@@ -221,11 +225,12 @@ class ApplicationController < ActionController::Base
   def rejudge
     submission = Submission.where(_id: params['submission_id']).first
     unless submission.nil?
-      if current_user.role
+      if current_user.role == "admin"
         submission.update_attributes!( status_code: "PE" )
         ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
       end
     end
+    render :nothing => true
   end
 
 end
