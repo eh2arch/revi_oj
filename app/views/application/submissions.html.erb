@@ -27,7 +27,7 @@
                                                             <th>Problem Code</th>
                                                             <th>Status Code</th>
                                                             <th>Submission Time</th>
-                                                            <% if current_user.role %>
+                                                            <% if current_user.role =="admin"%>
                                                             <th>Rejudge</th>
                                                             <% end %>
                                                         </tr>
@@ -66,7 +66,7 @@
                                                                 <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
                                                                     <%=submission[:submission_time].to_time.iso8601%>
                                                                 </td>
-                                                                <% if current_user.role %>
+                                                                <% if current_user.role=="admin"%>
                                                                 <td class="rejudge_submission" data-submission-id="<%=submission[:_id].to_s%>">
                                                                     <%=image_tag("refresh.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
                                                                 </td>

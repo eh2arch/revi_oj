@@ -13,7 +13,7 @@ class User
   field :full_name,          type: String, default: ""
   field :phone,              type: String, default: ""
   field :birthdate,          type: Date, default: ""
-  field :role,               type: Boolean, default: false
+  field :role,               type: String, default: ""
   # The admin can use this field to disallow the user to login
   field :disable,            type: Boolean, default: false
   ## Recoverable
@@ -51,6 +51,8 @@ class User
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
+  ROLES = %i[admin coder]
+
 
   class << self
     def serialize_from_session(key, salt)

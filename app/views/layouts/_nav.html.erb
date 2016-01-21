@@ -19,6 +19,22 @@
                 </li>
             </ul>
             <ul class="nav nav-userinfo navbar-right">
+            <% if current_user.role =="admin" %>
+                <li>
+                    <a href="/sidekiq" class="notification-icon">
+                        <span>
+                            <strong>Process queue</strong>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin" class="notification-icon">
+                        <span>
+                            <strong>Admin Panel</strong>
+                        </span>
+                    </a>
+                </li>
+                <% end %>
                 <li class="dropdown user-profile">
                     <a href="#" class="notification-icon" data-toggle="dropdown">
                         <span>

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.1'
+gem 'rails', '4.2.5'
 
 
 gem 'recaptcha', :require => 'recaptcha/rails'
@@ -12,9 +12,9 @@ gem 'mongo'
 gem 'mongoid', '~> 4.0.0'
 
 #gem 'bson_ext'
-
+gem 'cancan', '~> 1.6', '>= 1.6.10'
 # Use Devise for authentication
-gem 'devise'
+gem 'devise', '~> 3.5.3'
 
 gem "bson"
 gem "moped"
@@ -32,7 +32,7 @@ gem 'snappconfig'
 
 gem 'bootstrap-kaminari-views'
 
-gem 'docker-api', :require => 'docker'
+gem 'docker-api','~>1.21', :require => 'docker'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
