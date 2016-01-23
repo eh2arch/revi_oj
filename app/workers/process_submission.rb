@@ -74,8 +74,8 @@ class ProcessSubmission
       # puts 'container create'
       container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
        # puts 'container created'
-       
-      container_id = container.json["ID"]
+
+      container_id = container.json["Id"]
 
       time_start = Time.now()
 
