@@ -12,7 +12,7 @@ gem 'mongo'
 gem 'mongoid', '~> 4.0.0'
 
 #gem 'bson_ext'
-gem 'cancan', '~> 1.6', '>= 1.6.10'
+gem 'cancancan'
 # Use Devise for authentication
 gem 'devise', '~> 3.5.3'
 
@@ -20,6 +20,8 @@ gem "bson"
 gem "moped"
 
 gem 'rails_admin', '~> 0.6.6'
+gem 'activesupport-json_encoder'
+gem "mongoid-paperclip", :require => "mongoid_paperclip"
 
 gem 'sinatra', :require => nil
 gem 'sidekiq'
