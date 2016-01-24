@@ -186,25 +186,44 @@ class ApplicationController < ActionController::Base
     @title = "Submissions"
     @main_content_page = true
     @submissions_page = true
-    @contest_code = params[:ccode] || nil
+    @contest_code = params[:ccode]
+    @problem_code = params[:pcode]
+    @user_id = params[:user_id]
+    query_params = {}
+    unless @user_id.nil?
+      @user = User.where(id: @user_id).first
+      if @user.nil?
+        render 'error/error_404' and return
+      end
+      query_params[:user_id] = @user_id
+    end
     unless @contest_code.nil?
       contest = Contest.where(ccode: @contest_code).first
       if contest.nil?
-        redirect_to controller: 'error', action: 'error_404' and return
+        render 'error/error_404' and return
       end
-      problems = contest.problems
-      problem_ids = problems.to_a.map { |problem| problem[:_id] }
-      @submissions = Submission.where(:problem_id.in => problem_ids).order_by(submission_time: -1).page(params[:page]).per(30)
-    else
-      @submissions = Submission.order_by(submission_time: -1).page(params[:page]).per(30)
+      if @problem_code.nil?
+        problems = contest.problems
+        problem_ids = problems.to_a.map { |problem| problem[:_id] }
+        query_params[:problem_id.in] = problem_ids
+      else
+        problem = Problem.where(pcode: @problem_code).first
+        if problem.nil?
+          render 'error/error_404' and return
+        end
+        query_params[:problem_id] = problem.id.to_s
+      end
     end
+    @submissions = Submission.where(query_params).order_by(submission_time: -1).page(params[:page]).per(30)
     @submission_authorize_flag = @submissions.all? { |submission| can?(:update, submission) }
     @users = []
     @problems = []
+    @contest_codes = []
     @submissions.each do |submission|
       user = submission.user
-      @users << { name: user[:full_name], college: user[:college], username: user[:username] }
+      @users << { name: user[:full_name], college: user[:college], username: user[:username], id: user[:id] }
       @problems << submission.problem[:pcode]
+      @contest_codes << submission.problem.contest[:ccode]
     end
   end
 

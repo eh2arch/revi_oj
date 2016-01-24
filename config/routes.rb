@@ -11,20 +11,27 @@ CodecrackerV4::Application.routes.draw do
 
   root :to => 'application#home'
 
-  get 'contests' => 'application#home'
-  get 'home' => 'application#home'
-  get 'scoreboard/:ccode' => 'application#scoreboard'
-  get 'contests/:ccode/:pcode' => 'application#problem'
-  get 'contests/:ccode' => 'application#contests'
-  get 'users/:username' => 'application#users'
-  get 'error/404' => 'error#error_404'
-  # get 'submit' => 'application#verify_submission'
-  post 'scoreboard/:ccode' => 'application#verify_submission'
-  get 'submissions' => 'application#submissions'
-  get 'submissions/:ccode' => 'application#submissions'
-  get 'get_submission_data' => 'application#get_submission_data'
-  get 'rejudge' => 'application#rejudge'
-  get 'view_submission/:id' => 'application#view_submission'
+
+  controller :application do
+    get 'contests' => :home
+    get 'home' => :home
+    get 'scoreboard/:ccode' => :scoreboard
+    get 'contests/:ccode/:pcode' => :problem
+    get 'contests/:ccode' => :contests
+    get 'users/:username' => :users
+    get 'error/404' => :error_404
+    # get 'submit' => :verify_submission
+    post 'scoreboard/:ccode' => :verify_submission
+    get 'submissions' => :submissions
+    get 'submissions/contest/:ccode' => :submissions
+    get 'submissions/contest/:ccode/problem/:pcode' => :submissions
+    get 'submissions/user/:user_id' => :submissions
+    get 'submissions/contest/:ccode/user/:user_id' => :submissions
+    get 'submissions/contest/:ccode/problem/:pcode/user/:user_id' => :submissions
+    get 'get_submission_data' => :get_submission_data
+    get 'rejudge' => :rejudge
+    get 'view_submission/:id' => :view_submission
+  end
 
   # You can have the root of your site routed with "root"
 

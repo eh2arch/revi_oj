@@ -3,7 +3,13 @@
                             <li> <a href="/home"><i class="fa-trophy"></i>Contests</a> </li>
                             <li class="active"> <a href="/submissions"><i class="fa-signal"></i><%= @title %> </a> </li>
                             <% unless @contest_code.nil? %>
-                                <li class="active"> <strong><i class="fa-cubes"></i><%= @contest_code %></strong> </li>
+                                <li class="active"> <a href=<%="/contests/#{@contest_code}/"%>><i class="fa-cubes"></i><%= @contest_code %></a> </li>
+                            <% end %>
+                            <% unless @problem_code.nil? %>
+                                <li class="active"> <a href=<%="/contests/#{@contest_code}/#{@problem_code}"%>><i class="fa-cube"></i><%= @problem_code %></a></li>
+                            <% end %>
+                            <% unless @user.nil? %>
+                                <li class="active"> <a href=<%="/submissions/contest/#{@contest_code}/problem/#{@problem_code}/user/#{@user_id}"%>><i class="fa-user"></i><%= @user[:username] %></a></li>
                             <% end %>
                         </ol>
                 </div>
@@ -40,13 +46,17 @@
                                                         <% @submissions.each_with_index do |submission, index| %>
                                                             <tr>
                                                                 <td class="text-primary">
-                                                                    <strong style="font-size:1.2em;"><%=@users[index][:username]%></strong>
-                                                                    <span>
-                                                                        <%=@users[index][:college]%>
-                                                                    </span>
+                                                                    <strong style="font-size:1.2em;">
+                                                                    <%= link_to @users[index][:username], "/submissions/user/#{@users[index][:id]}" %>
+                                                                    </strong>
+                                                                    <!-- <span> -->
+                                                                        <%#=@users[index][:college]%>
+                                                                    <!-- </span> -->
                                                                 </td>
                                                                 <td class="text-primary">
-                                                                    <strong><a href="#"><%=@problems[index]%></a></strong>
+                                                                    <strong>
+                                                                    <%= link_to @problems[index], "/submissions/contest/#{@contest_codes[index]}/problem/#{@problems[index]}" %>
+                                                                    </strong>
                                                                 </td>
                                                                 <td class="submission_img" data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
                                                                     <% if submission[:status_code] == 'PE'%>
