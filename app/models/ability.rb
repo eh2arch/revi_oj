@@ -2,18 +2,24 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    alias_action :create, :read, :update, :destroy, :to => :crud
 
-                      # allow everyone to read everything
-    if user 
-      can :read, :all
-      if user.role == "admin"
-        can :manage, :all   
-        can :access, :rails_admin       # only allow admin users to access Rails Admin
-        can :dashboard            # allow superadmins to do anything
-      elsif user.role == "coder"
-        can :read, :all   # allow sales to only update visible products
+    user ||= User.new
+
+    if user.admin?
+      can :access, :rails_admin       # only allow admin users to access Rails Admin
+      can :dashboard                  # allow access to dashboard
+      can :manage, :all               # allow exporting and viewing history
+      can :crud, :all                 # allow superadmins to do anything
+    else
+      can [:update, :destroy], Contest, creator_id: (user.creator? ? user.creator.id : nil)
+      can [:update, :destroy], Problem, creator_id: (user.creator? ? user.creator.id : nil)
+      can [:read, :update, :destroy], Submission do |submission|
+        submission.problem.creator.user.id == user.id
       end
+      can :read, Submission, user_id: user.id
     end
+
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)
@@ -23,12 +29,12 @@ class Ability
     #     can :read, :all
     #   end
     #
-    # The first argument to `can` is the action you are giving the user 
+    # The first argument to `can` is the action you are giving the user
     # permission to do.
     # If you pass :manage it will apply to every action. Other common actions
     # here are :read, :create, :update and :destroy.
     #
-    # The second argument is the resource the user can perform the action on. 
+    # The second argument is the resource the user can perform the action on.
     # If you pass :all it will apply to every resource. Otherwise pass a Ruby
     # class of the resource.
     #

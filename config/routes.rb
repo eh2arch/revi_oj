@@ -5,10 +5,9 @@ CodecrackerV4::Application.routes.draw do
 
   devise_for :users, :controllers => {:sessions => 'users/sessions', :registrations => 'users/registrations'}
   require 'sidekiq/web'
-  authenticate :user, lambda { |u| u.role == "admin" } do
-    mount Sidekiq::Web => '/sidekiq'
+  authenticate :user, lambda { |u| u.admin? } do
+      mount Sidekiq::Web => '/sidekiq'
   end
-  
 
   root :to => 'application#home'
 
@@ -25,6 +24,7 @@ CodecrackerV4::Application.routes.draw do
   get 'submissions/:ccode' => 'application#submissions'
   get 'get_submission_data' => 'application#get_submission_data'
   get 'rejudge' => 'application#rejudge'
+  get 'view_submission/:id' => 'application#view_submission'
 
   # You can have the root of your site routed with "root"
 

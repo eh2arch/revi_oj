@@ -5,18 +5,18 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  rescue_from CanCan::AccessDenied do |exception|
-    redirect_to main_app.root_path, :alert => exception.message
-  end
+  before_action :authenticate_user!
 
-  before_filter :authenticate_user!
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to main_app.root_path, alert: "Access denied. You do not have sufficient privileges to perform this action."
+  end
 
   def home
     @main_content_page = true
     @home_page = true
     @title = "Contests"
     @description = "See the ongoing, upcoming and past contests"
-    
+
     upcoming_contests = Contest.where({ start_time: { :$gt => DateTime.now } })
     ongoing_contests = Contest.where({ start_time: { :$lte => DateTime.now }, end_time: { :$gte => DateTime.now } })
     past_contests = Contest.where({ end_time: { :$lt => DateTime.now } })
@@ -198,6 +198,7 @@ class ApplicationController < ActionController::Base
     else
       @submissions = Submission.order_by(submission_time: -1).page(params[:page]).per(30)
     end
+    @submission_authorize_flag = @submissions.all? { |submission| can?(:update, submission) }
     @users = []
     @problems = []
     @submissions.each do |submission|
@@ -218,17 +219,18 @@ class ApplicationController < ActionController::Base
 
     respond_to do |format|
       format.html
-      format.json { render json: { status_code: submission[:status_code], description: submission[:error_description], running_time: running_time } }
+      format.json { render json: { status_code: submission[:status_code], description: submission[:status_code], running_time: running_time } }
     end
   end
 
   def rejudge
     submission = Submission.where(_id: params['submission_id']).first
+    authorize! :update, submission
     unless submission.nil?
-      if current_user.role == "admin"
         submission.update_attributes!( status_code: "PE" )
         ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
-      end
+    else
+      redirect_to controller: 'error', action: 'error_404' and return
     end
     render :nothing => true
   end

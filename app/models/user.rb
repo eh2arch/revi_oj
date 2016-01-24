@@ -14,8 +14,9 @@ class User
   field :phone,              type: String, default: ""
   field :birthdate,          type: Date, default: ""
   field :role,               type: String, default: ""
-  # The admin can use this field to disallow the user to login
-  field :disable,            type: Boolean, default: false
+  ## Admin role
+  field :enabled, type: Boolean, default: false
+  field :admin,   type: Boolean, default: false
   ## Recoverable
   field :reset_password_token,   type: String
   field :reset_password_sent_at, type: Time
@@ -51,8 +52,6 @@ class User
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
-  ROLES = %i[admin coder]
-
 
   class << self
     def serialize_from_session(key, salt)
@@ -62,11 +61,17 @@ class User
   end
 
   before_save :init_user
+  before_create  :enable_first_user_and_make_admin
 
-  def init_user
-    email = self[:email]
-    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}"
-    return true
-  end
+  private
+    def enable_first_user_and_make_admin
+      self.enabled = true and self.admin = true if 'User'.constantize.count == 0
+    end
+
+    def init_user
+      email = self[:email]
+      system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}"
+      return true
+    end
 
 end

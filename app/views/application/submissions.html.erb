@@ -20,7 +20,7 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                        <% if current_user.role =="admin" %>
+                                        <% if @submission_authorize_flag %>
                                         <div class="btn btn-success rejudge_page"> Rejudge</div>
                                         <div class="btn btn-success rejudge_all"> Rejudge All </div>
                                         <%end%>
@@ -31,7 +31,7 @@
                                                             <th>Problem Code</th>
                                                             <th>Status Code</th>
                                                             <th>Submission Time</th>
-                                                            <% if current_user.role =="admin"%>
+                                                            <% if @submission_authorize_flag %>
                                                             <th>Rejudge</th>
                                                             <% end %>
                                                         </tr>
@@ -67,10 +67,12 @@
                                                                     <br /><br /><span><i><b> <%=submission[:error_description]%> </b></i></span>
                                                                     <% end -%>
                                                                 </td>
-                                                                <td class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
-                                                                    <%=submission[:submission_time].to_time.iso8601%>
+                                                                <td>
+                                                                    <a href="/view_submission/<%=submission[:_id].to_s%>" data-remote="true" class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
+                                                                        <%=submission[:submission_time].to_time.iso8601%>
+                                                                    </a>
                                                                 </td>
-                                                                <% if current_user.role=="admin"%>
+                                                                <% if can? :update, submission %>
                                                                 <td class="rejudge_submission" data-submission-id="<%=submission[:_id].to_s%>">
                                                                     <%=image_tag("refresh.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
                                                                 </td>
