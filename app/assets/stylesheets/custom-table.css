@@ -90,3 +90,13 @@ tr:hover
 {
 	font-size: 3em;
 }
+table, th
+{
+	text-align:center !important;
+}
+.data-table .name {
+    display: block;
+    font-size: 14px;
+    color: #2c2e2f;
+    font-weight: 700;
+}

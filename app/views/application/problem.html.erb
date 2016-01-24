@@ -42,83 +42,86 @@
 				    <div class="col-md-12" id="code" style="border:1px solid #ddd !important;border-top:none !important;padding-left:0;padding-right:0">
 				    </div>
 				</div>
-                <script type="text/javascript">
-                    jQuery(document).ready(function() {
-				        jQuery('.dropdown-toggle').dropdown();
-                        jQuery("#mode").selectBoxIt({
-                            showEffect: 'fadeIn',
-                            hideEffect: 'fadeOut'
-                        });
-						var editor = new CodeMirror(document.getElementById("code"), {
-							lineNumbers: true,
-							extraKeys: null,
-							mode: {name: "text/x-c++src", globalVars: true},
-							scrollbarStyle: "null",
-							lineWrapping: true,
-							viewportMargin: Infinity,
-							matchBrackets: true
-						});
-		                jQuery("#mode").change(function(){
-		                	editor.setOption("mode", jQuery(this).val());
-		                });
-		                jQuery("#theme li").click(function(){
-		                	editor.setOption("theme", jQuery(this).attr('value'));
-		                });
-		                jQuery(".dropdown-menu a#auto-complete-a ").click(function(e){
-		                	e.stopPropagation();
-		                });
-		                jQuery("input[type=checkbox]").change(function(){
-		                	if (jQuery(this).is(':checked')) {
-		                		editor.setOption("extraKeys", {"Ctrl-Space": "autocomplete"});
-		                	}
-		                	else {
-		                		editor.setOption("extraKeys", null);
-		                	}
-		                	console.log(editor.getOption("extraKeys"));
-		                });
-		                jQuery("#submit-code").click(function(){
-		                	data = {};
-		                	data["user_source_code"] = editor.getValue();
-		                	mode_dom_element = document.getElementById("mode");
-		                	data["language"] = mode_dom_element.options[mode_dom_element.selectedIndex].text.toLowerCase();
-		                	data["pcode"] = "<%= @problem_code %>";
-		                	data["ccode"] = "<%= @contest_code %>";
-		                	data["authenticity_token"] = "<%= form_authenticity_token %>";
-		                	// window.location.href = "../../submit?" + jQuery.param(data);
 
-							var form = document.createElement("form");
-							    user_source_code = document.createElement("textarea");
-							    language = document.createElement("input");
-							    pcode = document.createElement("input");
-							    ccode = document.createElement("input");
-							    authenticity_token = document.createElement("input");
-								authenticity_token.name = "authenticity_token";
-							    authenticity_token.value = "<%= form_authenticity_token %>";
-							    authenticity_token.type = "hidden";
-							form.action = "/scoreboard/" + data["ccode"];
-							form.method = "post"
+				<% content_for :scripts do %>
+	                <script type="text/javascript">
+	                    jQuery(document).ready(function() {
+					        jQuery('.dropdown-toggle').dropdown();
+	                        jQuery("#mode").selectBoxIt({
+	                            showEffect: 'fadeIn',
+	                            hideEffect: 'fadeOut'
+	                        });
+							var editor = new CodeMirror(document.getElementById("code"), {
+								lineNumbers: true,
+								extraKeys: null,
+								mode: {name: "text/x-c++src", globalVars: true},
+								scrollbarStyle: "null",
+								lineWrapping: true,
+								viewportMargin: Infinity,
+								matchBrackets: true
+							});
+			                jQuery("#mode").change(function(){
+			                	editor.setOption("mode", jQuery(this).val());
+			                });
+			                jQuery("#theme li").click(function(){
+			                	editor.setOption("theme", jQuery(this).attr('value'));
+			                });
+			                jQuery(".dropdown-menu a#auto-complete-a ").click(function(e){
+			                	e.stopPropagation();
+			                });
+			                jQuery("input[type=checkbox]").change(function(){
+			                	if (jQuery(this).is(':checked')) {
+			                		editor.setOption("extraKeys", {"Ctrl-Space": "autocomplete"});
+			                	}
+			                	else {
+			                		editor.setOption("extraKeys", null);
+			                	}
+			                	console.log(editor.getOption("extraKeys"));
+			                });
+			                jQuery("#submit-code").click(function(){
+			                	data = {};
+			                	data["user_source_code"] = editor.getValue();
+			                	mode_dom_element = document.getElementById("mode");
+			                	data["language"] = mode_dom_element.options[mode_dom_element.selectedIndex].text.toLowerCase();
+			                	data["pcode"] = "<%= @problem_code %>";
+			                	data["ccode"] = "<%= @contest_code %>";
+			                	data["authenticity_token"] = "<%= form_authenticity_token %>";
+			                	// window.location.href = "../../submit?" + jQuery.param(data);
 
-							user_source_code.name = "user_source_code";
-							language.name = "language";
-							pcode.name = "pcode";
-							ccode.name = "ccode";
+								var form = document.createElement("form");
+								    user_source_code = document.createElement("textarea");
+								    language = document.createElement("input");
+								    pcode = document.createElement("input");
+								    ccode = document.createElement("input");
+								    authenticity_token = document.createElement("input");
+									authenticity_token.name = "authenticity_token";
+								    authenticity_token.value = "<%= form_authenticity_token %>";
+								    authenticity_token.type = "hidden";
+								form.action = "/scoreboard/" + data["ccode"];
+								form.method = "post"
 
-							user_source_code.value = data["user_source_code"];
-							language.value = data["language"];
-							pcode.value = data["pcode"];
-							ccode.value = data["ccode"];
+								user_source_code.name = "user_source_code";
+								language.name = "language";
+								pcode.name = "pcode";
+								ccode.name = "ccode";
 
-							form.appendChild(user_source_code);
-							form.appendChild(language);
-							form.appendChild(pcode);
-							form.appendChild(ccode);
-							form.appendChild(authenticity_token);
+								user_source_code.value = data["user_source_code"];
+								language.value = data["language"];
+								pcode.value = data["pcode"];
+								ccode.value = data["ccode"];
 
-							document.body.appendChild(form);
-							console.log(data["user_source_code"]);
-							console.log(user_source_code.value);
-							// console.log(jQuery("form").serialize());
-							form.submit();
-		                });
-                    });
-                </script>
+								form.appendChild(user_source_code);
+								form.appendChild(language);
+								form.appendChild(pcode);
+								form.appendChild(ccode);
+								form.appendChild(authenticity_token);
+
+								document.body.appendChild(form);
+								console.log(data["user_source_code"]);
+								console.log(user_source_code.value);
+								// console.log(jQuery("form").serialize());
+								form.submit();
+			                });
+	                    });
+	                </script>
+				<% end %>

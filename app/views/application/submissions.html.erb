@@ -105,4 +105,10 @@
                         </div>
                     </div>
                 </div>
-                <%= javascript_include_tag "submissions.js" %>
+                <% content_for :scripts do %>
+                    <%= javascript_include_tag "submissions.js" %>
+                <% end %>
+
+                <% content_for :styles do %>
+                    <%= javascript_include_tag "submissions.js" %>
+                <% end %>

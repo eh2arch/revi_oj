@@ -4,8 +4,25 @@
  *
 */
 
-body {	
+body {
 }
 
 a {
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+  min-height: 300px;
+}
+.CodeMirror {
+  font-size: 1.25em;
+  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; !important;
+}
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    height: 500px;
+    overflow-y: auto;
 }

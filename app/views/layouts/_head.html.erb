@@ -2,7 +2,7 @@
     <title><%= @title + ' | CodeCracker' %></title>
     <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic", media: "all", "data-turbolinks-track" => true %>
     <%= stylesheet_link_tag "flipclock.css" %>
-    <% if @main_content_page == true %>
+    <% if @main_content_page %>
         <%= stylesheet_link_tag "fonts/meteocons/css/meteocons.css" %>
     <% end %>
     <% if @problem_page || @submissions_page %>
@@ -24,26 +24,6 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
     <% end %>
     <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
-    <% if @problem_page || @submissions_page %>
-        <style type="text/css">
-            .CodeMirror {
-              border: 1px solid #eee;
-              height: auto;
-              min-height: 300px;
-           }
-           .CodeMirror {
-              font-size: 1.25em;
-              font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace; !important;
-           }
-            .modal-dialog{
-                overflow-y: initial !important
-            }
-            .modal-body{
-                height: 500px;
-                overflow-y: auto;
-            }
-        </style>
-    <% end %>
     <% if @problem_page %>
         <style>
             .CodeMirror-scroll {
@@ -60,7 +40,7 @@
     <meta name="author" content="Archit Srivastava" />
     <%= csrf_meta_tags %>
     <%= javascript_include_tag "application_header.js" %>
-    <% if @main_content_page == true %>
+    <% if @main_content_page %>
         <%= javascript_include_tag "jvectormap/jquery-jvectormap-1.2.2.min.js" %>
     <% end %>
 
