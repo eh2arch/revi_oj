@@ -37,6 +37,7 @@
                                                             <th>Problem Code</th>
                                                             <th>Status Code</th>
                                                             <th>Submission Time</th>
+                                                            <th>Lang</th>
                                                             <% if @submission_authorize_flag %>
                                                             <th>Rejudge</th>
                                                             <% end %>
@@ -59,6 +60,8 @@
                                                                     </strong>
                                                                 </td>
                                                                 <td class="submission_img" data-submission-id="<%=submission[:_id]%>" data-status-code="<%=submission[:status_code]%>" align="center">
+                                                                    <a href="/view_submission_details/<%=submission[:_id].to_s%>" data-remote="true">
+
                                                                     <% if submission[:status_code] == 'PE'%>
                                                                     <%=image_tag("load.gif", size:"24")  %>
                                                                     <% elsif submission[:status_code] == 'AC'%>
@@ -75,12 +78,18 @@
                                                                     <% else %>
                                                                     <%=image_tag("exclamation.png",size:"24", data: { toggle: 'tooltip', placement: 'bottom', container: 'body', title: 'Signal received: ' + submission[:status_code] })  %>
                                                                     <br /><br /><span><b> <%=submission[:error_description]%> </b></span>
+                                                                    </a>
                                                                     <% end -%>
                                                                 </td>
                                                                 <td>
                                                                     <a href="/view_submission/<%=submission[:_id].to_s%>" data-remote="true" class="timeago" title="<%=submission[:submission_time].to_time.iso8601%>">
                                                                         <%=submission[:submission_time].to_time.iso8601%>
                                                                     </a>
+                                                                </td>
+                                                                <td>
+                                                                    <strong style="font-size:1.2em;">
+                                                                        <%=submission.language.name.capitalize%>
+                                                                    </strong>
                                                                 </td>
                                                                 <% if can? :update, submission %>
                                                                 <td class="rejudge_submission" data-submission-id="<%=submission[:_id].to_s%>">
