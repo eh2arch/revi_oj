@@ -62,19 +62,19 @@
                                                                     <% if submission[:status_code] == 'PE'%>
                                                                     <%=image_tag("load.gif", size:"24")  %>
                                                                     <% elsif submission[:status_code] == 'AC'%>
-                                                                    <%=image_tag("tick.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
-                                                                    <br /><br /><span><i><b> <%=submission[:running_time].round(2)%> </b></i></span>
+                                                                    <%=image_tag("tick.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', container: 'body', title: 'Correct Answer:' + submission[:running_time].round(2).to_s })  %>
+                                                                    <br /><br /><span><b> <%=submission[:running_time].round(2)%> </b></span>
                                                                     <% elsif submission[:status_code] == 'WA'%>
-                                                                    <%=image_tag("red-cross.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
+                                                                    <%=image_tag("red-cross.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', container: 'body', title: 'Wrong Answer' })  %>
                                                                     <% elsif submission[:status_code] == 'TLE'
                                                                          %>
-                                                                    <%=image_tag("clock.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code]})  %>
+                                                                    <%=image_tag("clock.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', container: 'body', title: 'Time Limit Exceeded' })  %>
                                                                     <% elsif submission[:status_code] == 'CE'
                                                                          %>
-                                                                    <%=image_tag("alert.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code]})  %>
+                                                                    <%=image_tag("alert.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', container: 'body', title: 'Compilation Error' })  %>
                                                                     <% else %>
-                                                                    <%=image_tag("exclamation.png",size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
-                                                                    <br /><br /><span><i><b> <%=submission[:error_description]%> </b></i></span>
+                                                                    <%=image_tag("exclamation.png",size:"24", data: { toggle: 'tooltip', placement: 'bottom', container: 'body', title: 'Signal received: ' + submission[:status_code] })  %>
+                                                                    <br /><br /><span><b> <%=submission[:error_description]%> </b></span>
                                                                     <% end -%>
                                                                 </td>
                                                                 <td>
@@ -84,7 +84,7 @@
                                                                 </td>
                                                                 <% if can? :update, submission %>
                                                                 <td class="rejudge_submission" data-submission-id="<%=submission[:_id].to_s%>">
-                                                                    <%=image_tag("refresh.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', original_title: submission[:status_code] })  %>
+                                                                    <%=image_tag("refresh.png", size:"24", data: { toggle: 'tooltip', placement: 'bottom', title: submission[:status_code] })  %>
                                                                 </td>
                                                                 <% end %>
                                                             </tr>
@@ -120,5 +120,4 @@
                 <% end %>
 
                 <% content_for :styles do %>
-                    <%= javascript_include_tag "submissions.js" %>
                 <% end %>

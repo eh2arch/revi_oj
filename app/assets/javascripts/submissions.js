@@ -16,28 +16,37 @@ $(document).ready(function() {
                 var img_attr = null, tooltip = '', status_description = submission_data['description'];
                 if(submission_data['status_code'] == 'AC'){
                     img_attr = 'tick.png';
-                    tooltip = submission_data['running_time'];
-                    status_description = Math.round(tooltip * 100) / 100;
+                    tooltip = 'Correct Answer:' + submission_data['running_time'];
+                    status_description = Math.round(submission_data['running_time'] * 100) / 100;
                 }
                 else if (submission_data['status_code'] == 'WA'){
                     img_attr = 'red-cross.png';
+                    tooltip = 'Wrong Answer';
+                    status_description = null;
                 }
                 else if (submission_data['status_code'] == 'CE') {
                     img_attr = 'alert.png';
+                    tooltip = 'Compilation Error';
+                    status_description = null;
                     // tooltip = submission_data['description'];
                 }
                 else if (submission_data['status_code'] == 'TLE') {
                     img_attr = 'clock.png';
+                    tooltip = 'Time Limit Exceeded';
+                    status_description = null;
                 }
                 else
                 {
                     img_attr = 'exclamation.png';
-                    tooltip = submission_data['description'];
+                    tooltip = 'Signal received: ' + submission_data['description'];
                 }
 
-                element.setAttribute('data-status-code', submission_data['status_code']);
+                $(element).attr('data-status-code', submission_data['status_code']);
                 $(element).children().remove();
-                $(element).append(" <img src='/assets/" + img_attr + "' height='24' width='24' data-toggle='tooltip' data-placement='bottom' title='" + submission_data['status_code'] + "' data-original-title='" + status_description + "' > <br /><br /> <span><i><b>" + status_description + "</b></i></span>");
+                $(element).append(" <img src='/assets/" + img_attr + "' height='24' width='24' data-toggle='tooltip' data-placement='bottom' title='" + tooltip + "' >");
+                if(status_description !== null) {
+                    $(element).append("<br /><br /> <span><b>" + status_description + "</b></span>");
+                }
                 $(element).siblings('.rejudge_submission').find('img').show('slow');
               }
             },
