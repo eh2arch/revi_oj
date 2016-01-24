@@ -13,18 +13,30 @@ class Contest
   accepts_nested_attributes_for :clarifications, :allow_destroy => true
 
   has_and_belongs_to_many :users
-  has_many :problems
+  has_many :problems, :dependent => :destroy
 
   before_save :create_contest_folder
+  before_destroy :delete_contest_folder
 
-  def create_contest_folder
-  	users = self.users
-  	users.each do |user|
-	    email = user[:email]
-	    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{self[:ccode]}"
-  	end
-  	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{self[:ccode]}"
-    return true
-  end
+  private
+    def create_contest_folder
+    	users = self.users
+    	users.each do |user|
+  	    email = user[:email]
+  	    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{self[:ccode]}"
+    	end
+    	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{self[:ccode]}"
+      return true
+    end
+
+    def delete_contest_folder
+      users = self.users
+      users.each do |user|
+        email = user[:email]
+        system 'rm', '-rf', "#{CONFIG[:base_path]}/#{email}/#{self[:ccode]}"
+      end
+      system 'rm', '-rf', "#{CONFIG[:base_path]}/contests/#{self[:ccode]}"
+      return true
+    end
 
 end
