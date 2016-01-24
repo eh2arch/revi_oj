@@ -31,6 +31,7 @@ CodecrackerV4::Application.routes.draw do
     get 'get_submission_data' => :get_submission_data
     get 'rejudge' => :rejudge
     get 'view_submission/:id' => :view_submission
+    get 'view_submission_details/:id' => :view_submission_details
   end
 
   # You can have the root of your site routed with "root"

@@ -270,4 +270,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def view_submission_details
+    @modal_title = "Submission ##{params[:id]} Error Details"
+    @id = params[:id]
+    submission = Submission.where(_id: params[:id]).first
+    authorize! :read, submission
+    unless submission.nil? || (submission.status_code.in? ['WA', 'AC', 'TLE'])
+      @modal_body = submission.error_description
+    else
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+
+    render :view_submission
+  end
+
 end
