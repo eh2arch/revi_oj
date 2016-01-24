@@ -22,9 +22,9 @@ thead tr
 	-moz-transform:scale(1.0) !important;
 	-o-transform:scale(1.0) !important;
 }
-*
+body
 {
-	font-family: 'Raleway','Open Sans', sans-serif;
+	font-family: 'Lato', 'Roboto', 'Open Sans', sans-serif;
 }
 tr
 {
