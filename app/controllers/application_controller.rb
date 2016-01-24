@@ -235,4 +235,20 @@ class ApplicationController < ActionController::Base
     render :nothing => true
   end
 
+  def view_submission
+    @modal_title = "Submission ##{params[:id]}"
+    @id = params[:id]
+    submission = Submission.where(_id: params[:id]).first
+    authorize! :read, submission
+    unless submission.nil?
+      @modal_body = submission.user_source_code
+    else
+      redirect_to controller: 'error', action: 'error_404' and return
+    end
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
 end

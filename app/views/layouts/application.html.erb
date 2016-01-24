@@ -16,6 +16,9 @@
 		<div class="page-loading-overlay">
 		    <div class="loader-2"></div>
 		</div>
+
+		<%= yield :modals %>
+
 		<% if @home_page || @contest_page || @problem_page || @scoreboard_page || @submissions_page %>
 			<%= stylesheet_link_tag "datatables/dataTables.bootstrap.css" %>
 			<%= stylesheet_link_tag "custom-table.css" %>
@@ -58,6 +61,8 @@
 				  		toastr.error("Your submission exceeds the source code limit. Please check the rules for more details", "Source Limit Error", opts);
 				  <% elsif @notif_submission_success %>
 					  toastr.success("Source code submitted successfully. Please check the submissions page for the status", "Success", opts);
+				  <% elsif flash[:alert] %>
+				  		toastr.error("<%=flash[:alert]%>", "Error!", opts);
 				  <% end %>
 				});
 			</script>
