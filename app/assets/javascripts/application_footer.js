@@ -17,7 +17,7 @@
 //= require xenon-api
 //= require xenon-toggles
 //= require jquery.validate.min
-//= require ./toastr/toastr.min
+//= require toastr/toastr.min
 //= require xenon-custom
 
 // (function(i, s, o, g, r, a, m) {

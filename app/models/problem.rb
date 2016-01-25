@@ -15,23 +15,38 @@ class Problem
 
   belongs_to :contest, :counter_cache => true
 
-  has_many :submissions
+  has_many :submissions, :dependent => :destroy
   has_and_belongs_to_many :languages
 
-  has_many :test_cases
+  has_many :test_cases, :dependent => :destroy
 
   before_save :create_problem_folder
+  before_destroy :destroy_problem_folder
 
-  def create_problem_folder
-  	contest = self.contest
-  	ccode = contest[:ccode]
-	users = contest.users
-	users.each do |user|
-	    email = user[:email]
-	    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{self[:pcode]}"
-	end
-	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}/test_cases"
-	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}/test_case_outputs"
-    return true
-  end
+  private
+    def create_problem_folder
+    	contest = self.contest
+    	ccode = contest[:ccode]
+    	users = contest.users
+    	users.each do |user|
+  	    email = user[:email]
+  	    system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{self[:pcode]}"
+    	end
+    	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}/test_cases"
+    	system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}/test_case_outputs"
+      return true
+    end
+
+    def destroy_problem_folder
+      contest = self.contest
+      ccode = contest[:ccode]
+      users = contest.users
+      users.each do |user|
+        email = user[:email]
+        system 'rm', '-rf', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{self[:pcode]}"
+      end
+      system 'rm', '-rf', "#{CONFIG[:base_path]}/contests/#{ccode}/#{self[:pcode]}"
+      return true
+    end
+
 end

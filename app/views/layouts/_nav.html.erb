@@ -17,9 +17,11 @@
                 <li> <a href="/home"><i class="fa-home"></i><span class="title">Contests</span></a>
                 <li> <a href="/submissions"><i class="fa-signal"></i><span class="title">Submissions</span></a>
                 </li>
+                <li> <a href="/submissions/user/<%=current_user.id%>"><i class="fa-child"></i><span class="title">My Submissions</span></a>
+                </li>
             </ul>
             <ul class="nav nav-userinfo navbar-right">
-            <% if current_user.role =="admin" %>
+            <% if current_user.admin? %>
                 <li>
                     <a href="/sidekiq" class="notification-icon">
                         <span>

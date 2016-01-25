@@ -20,6 +20,7 @@ class Submission
   belongs_to :problem, :counter_cache => true
 
   # before_save :save_submission
+  # before_destroy :delete_submission
 
   def save_submission
   	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
@@ -32,15 +33,29 @@ class Submission
   	ccode = contest[:ccode]
   	language = self.language
   	langcode = language[:langcode]
-	system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}"
+  	system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}"
     if langcode == 'java'
         input = File.open("#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/Main#{file_extensions[langcode]}", 'w')
     else
     	input = File.open("#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/user_source_code#{file_extensions[langcode]}", 'w')
     end
-	input.write(self[:user_source_code])
-	input.close
-	return true
+  	input.write(self[:user_source_code])
+  	input.close
+  	return true
   end
 
+  def delete_submission
+    file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
+    submission_id = self[:_id]
+    user = self.user
+    email = user[:email]
+    problem = self.problem
+    pcode = problem[:pcode]
+    contest = problem.contest
+    ccode = contest[:ccode]
+    language = self.language
+    langcode = language[:langcode]
+    system 'rm', '-rf', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}"
+    return true
+  end
 end

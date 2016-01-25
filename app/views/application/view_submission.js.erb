@@ -1,0 +1,16 @@
+$('#modal-<%=@id%>').remove();
+$('<%= j render(partial: "modal")%>').appendTo('body');
+
+var submittedCode = document.getElementById('view_submission-<%=@id%>');
+var editor = new CodeMirror.fromTextArea(submittedCode, {
+	lineNumbers: true,
+	extraKeys: null,
+	mode: {name: "text/x-c++src", globalVars: true},
+	lineWrapping: true,
+	viewportMargin: Infinity,
+	matchBrackets: true,
+	readOnly: true,
+	theme: "solarized light"
+});
+$('#modal-<%=@id%>').modal();
+setTimeout(function(){editor.refresh()}, 250);

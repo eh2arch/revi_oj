@@ -40,6 +40,7 @@ sudo vi /etc/default/docker.io
 add path
 DOCKER="/usr/bin/docker.io"
 
+sudo apt-get install software-properties-common
 create image archit/codecracker
 add python, gcc, g++, and java
 
@@ -55,3 +56,7 @@ create folder codecracker_v4 at /usr/local/bin
 do chmod -R a+w codecracker_v4
 
 To remove docker instances docker rm -f $(docker ps -aq)
+
+if on versoin 1.10-rc and docker causes problems execute these commands
+sudo apparmor_parser -R /etc/apparmor.d/docker-engine
+sudo service docker restart

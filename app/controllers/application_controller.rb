@@ -5,18 +5,18 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  rescue_from CanCan::AccessDenied do |exception|
-    redirect_to main_app.root_path, :alert => exception.message
-  end
+  before_action :authenticate_user!
 
-  before_filter :authenticate_user!
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to main_app.root_path, alert: "Access denied. You do not have sufficient privileges to perform this action."
+  end
 
   def home
     @main_content_page = true
     @home_page = true
     @title = "Contests"
     @description = "See the ongoing, upcoming and past contests"
-    
+
     upcoming_contests = Contest.where({ start_time: { :$gt => DateTime.now } })
     ongoing_contests = Contest.where({ start_time: { :$lte => DateTime.now }, end_time: { :$gte => DateTime.now } })
     past_contests = Contest.where({ end_time: { :$lt => DateTime.now } })
@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
     @contest_code = params[:ccode]
     contest = Contest.where( ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } ).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     @main_content_page = true
     @contest_page = true
@@ -61,11 +61,11 @@ class ApplicationController < ActionController::Base
     @problem_code = params[:pcode]
     contest = Contest.where({ ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } }).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     problem = contest.problems.where({ pcode: @problem_code, state: true }).first
     if problem.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     @main_content_page = true
     @problem_page = true
@@ -88,15 +88,15 @@ class ApplicationController < ActionController::Base
     contest_code = params["ccode"]
     language_document = Language.where(name: language).first
     if language_document.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     contest = Contest.where({ ccode: contest_code, state: true }).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     problem = contest.problems.where({ pcode: problem_code, state: true }).first
-    if problem.nil? || contest[:start_time] > DateTime.now || contest[:end_time] < DateTime.now
-      redirect_to controller: 'error', action: 'error_404' and return
+    if problem.nil? || contest[:start_time] > DateTime.now || contest[:end_time] < DateTime.now || !(problem.languages.include? language_document)
+      render 'error/error_404' and return
     end
     latest_submission = current_user.submissions.order_by({ created_at: -1 }).first
     unless latest_submission.nil?
@@ -136,7 +136,7 @@ class ApplicationController < ActionController::Base
     @contest_code = params[:ccode]
     contest = Contest.where({ ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } }).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     @contest_start_time = contest[:start_time]
 
@@ -186,31 +186,51 @@ class ApplicationController < ActionController::Base
     @title = "Submissions"
     @main_content_page = true
     @submissions_page = true
-    @contest_code = params[:ccode] || nil
+    @contest_code = params[:ccode]
+    @problem_code = params[:pcode]
+    @user_id = params[:user_id]
+    query_params = {}
+    unless @user_id.nil?
+      @user = User.where(id: @user_id).first
+      if @user.nil?
+        render 'error/error_404' and return
+      end
+      query_params[:user_id] = @user_id
+    end
     unless @contest_code.nil?
       contest = Contest.where(ccode: @contest_code).first
       if contest.nil?
-        redirect_to controller: 'error', action: 'error_404' and return
+        render 'error/error_404' and return
       end
-      problems = contest.problems
-      problem_ids = problems.to_a.map { |problem| problem[:_id] }
-      @submissions = Submission.where(:problem_id.in => problem_ids).order_by(submission_time: -1).page(params[:page]).per(30)
-    else
-      @submissions = Submission.order_by(submission_time: -1).page(params[:page]).per(30)
+      if @problem_code.nil?
+        problems = contest.problems
+        problem_ids = problems.to_a.map { |problem| problem[:_id] }
+        query_params[:problem_id.in] = problem_ids
+      else
+        problem = Problem.where(pcode: @problem_code).first
+        if problem.nil?
+          render 'error/error_404' and return
+        end
+        query_params[:problem_id] = problem.id.to_s
+      end
     end
+    @submissions = Submission.where(query_params).order_by(submission_time: -1).page(params[:page]).per(30)
+    @submission_authorize_flag = @submissions.all? { |submission| can?(:update, submission) }
     @users = []
     @problems = []
+    @contest_codes = []
     @submissions.each do |submission|
       user = submission.user
-      @users << { name: user[:full_name], college: user[:college], username: user[:username] }
+      @users << { name: user[:full_name], college: user[:college], username: user[:username], id: user[:id] }
       @problems << submission.problem[:pcode]
+      @contest_codes << submission.problem.contest[:ccode]
     end
   end
 
   def get_submission_data
     submission = Submission.where(_id: params['submission_id']).first
     if submission.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
 
     running_time = nil
@@ -218,19 +238,50 @@ class ApplicationController < ActionController::Base
 
     respond_to do |format|
       format.html
-      format.json { render json: { status_code: submission[:status_code], description: submission[:error_description], running_time: running_time } }
+      format.json { render json: { status_code: submission[:status_code], description: submission[:status_code], running_time: running_time } }
     end
   end
 
   def rejudge
     submission = Submission.where(_id: params['submission_id']).first
+    authorize! :update, submission
     unless submission.nil?
-      if current_user.role == "admin"
         submission.update_attributes!( status_code: "PE" )
         ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
-      end
+    else
+      render 'error/error_404' and return
     end
     render :nothing => true
+  end
+
+  def view_submission
+    @modal_title = "Submission ##{params[:id]}"
+    @id = params[:id]
+    submission = Submission.where(_id: params[:id]).first
+    authorize! :read, submission
+    unless submission.nil?
+      @modal_body = submission.user_source_code
+    else
+      render 'error/error_404' and return
+    end
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def view_submission_details
+    @modal_title = "Submission ##{params[:id]} Error Details"
+    @id = params[:id]
+    submission = Submission.where(_id: params[:id]).first
+    authorize! :read, submission
+    unless submission.nil? || (submission.status_code.in? ['WA', 'AC', 'TLE'])
+      @modal_body = submission.error_description
+    else
+      render 'error/error_404' and return
+    end
+
+    render :view_submission
   end
 
 end

@@ -67,6 +67,7 @@ class ProcessSubmission
       if langcode == 'java'
         memory_specification = 1677721600
       end
+
       seccomp_profile = File.read("#{CONFIG[:base_path]}/profile.json")
 
       if langcode == 'java'

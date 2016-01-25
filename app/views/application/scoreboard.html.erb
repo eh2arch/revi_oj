@@ -17,6 +17,7 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <% content_for :scripts %>
                                                 <script type="text/javascript">
                                                     jQuery(document).ready(function($) {
                                                         $("#scoretable").dataTable({
@@ -29,7 +30,7 @@
                                                         });
                                                     });
                                                 </script>
-
+                                            <% end %>
                                                 <table id="scoretable" class="table table-hover data-table middle-align table-striped" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>

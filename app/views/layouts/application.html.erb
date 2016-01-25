@@ -2,6 +2,8 @@
 <html lang="en">
 	<head>
 		<%= render partial: 'layouts/head' %>
+
+		<%= yield :styles %>
 	</head>
 	<body class="page-body">
 		<%= render partial: 'layouts/nav' %>
@@ -11,22 +13,20 @@
 				<%= yield %>
 				<%= render partial: 'layouts/footer' %>
 			</div>
+			<%= yield :scripts %>
 			<%= javascript_include_tag 'application_footer.js' %>
 		</div>
 		<div class="page-loading-overlay">
 		    <div class="loader-2"></div>
 		</div>
+
+		<%= yield :modals %>
+
 		<% if @home_page || @contest_page || @problem_page || @scoreboard_page || @submissions_page %>
 			<%= stylesheet_link_tag "datatables/dataTables.bootstrap.css" %>
 			<%= stylesheet_link_tag "custom-table.css" %>
 		<% end %>
 		<% if @home_page || @contest_page || @problem_page || @scoreboard_page || @submissions_page %>
-			<style>
-				table, th
-				{
-					text-align:center !important;
-				}
-			</style>
 			<%= javascript_include_tag "datatables/js/jquery.dataTables.min.js" %>
 			<%= javascript_include_tag "datatables/dataTables.bootstrap.js" %>
 			<%= javascript_include_tag "datatables/yadcf/jquery.dataTables.yadcf.js" %>
@@ -58,17 +58,11 @@
 				  		toastr.error("Your submission exceeds the source code limit. Please check the rules for more details", "Source Limit Error", opts);
 				  <% elsif @notif_submission_success %>
 					  toastr.success("Source code submitted successfully. Please check the submissions page for the status", "Success", opts);
+				  <% elsif flash[:alert] %>
+				  		toastr.error("<%=flash[:alert]%>", "Error!", opts);
 				  <% end %>
 				});
 			</script>
-            <style>
-                .data-table .name {
-                    display: block;
-                    font-size: 14px;
-                    color: #2c2e2f;
-                    font-weight: 700;
-                }
-            </style>
 		<% end %>
 	</body>
 </html>
