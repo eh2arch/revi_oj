@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
     @contest_code = params[:ccode]
     contest = Contest.where( ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } ).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     @main_content_page = true
     @contest_page = true
@@ -61,11 +61,11 @@ class ApplicationController < ActionController::Base
     @problem_code = params[:pcode]
     contest = Contest.where({ ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } }).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     problem = contest.problems.where({ pcode: @problem_code, state: true }).first
     if problem.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     @main_content_page = true
     @problem_page = true
@@ -88,15 +88,15 @@ class ApplicationController < ActionController::Base
     contest_code = params["ccode"]
     language_document = Language.where(name: language).first
     if language_document.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     contest = Contest.where({ ccode: contest_code, state: true }).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     problem = contest.problems.where({ pcode: problem_code, state: true }).first
-    if problem.nil? || contest[:start_time] > DateTime.now || contest[:end_time] < DateTime.now
-      redirect_to controller: 'error', action: 'error_404' and return
+    if problem.nil? || contest[:start_time] > DateTime.now || contest[:end_time] < DateTime.now || !(problem.languages.include? language_document)
+      render 'error/error_404' and return
     end
     latest_submission = current_user.submissions.order_by({ created_at: -1 }).first
     unless latest_submission.nil?
@@ -136,7 +136,7 @@ class ApplicationController < ActionController::Base
     @contest_code = params[:ccode]
     contest = Contest.where({ ccode: @contest_code, state: true, start_time: { :$lte => DateTime.now } }).first
     if contest.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     @contest_start_time = contest[:start_time]
 
@@ -230,7 +230,7 @@ class ApplicationController < ActionController::Base
   def get_submission_data
     submission = Submission.where(_id: params['submission_id']).first
     if submission.nil?
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
 
     running_time = nil
@@ -249,7 +249,7 @@ class ApplicationController < ActionController::Base
         submission.update_attributes!( status_code: "PE" )
         ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
     else
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
     render :nothing => true
   end
@@ -262,7 +262,7 @@ class ApplicationController < ActionController::Base
     unless submission.nil?
       @modal_body = submission.user_source_code
     else
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
 
     respond_to do |format|
@@ -278,7 +278,7 @@ class ApplicationController < ActionController::Base
     unless submission.nil? || (submission.status_code.in? ['WA', 'AC', 'TLE'])
       @modal_body = submission.error_description
     else
-      redirect_to controller: 'error', action: 'error_404' and return
+      render 'error/error_404' and return
     end
 
     render :view_submission
