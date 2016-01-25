@@ -59,30 +59,37 @@ class ProcessSubmission
     test_cases.each_with_index do |test_case, index|
       # puts index + 1
 
-      if langcode == 'python'
-        command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
-      elsif langcode == 'java'
+      if langcode == 'java'
         command = "java -cp /submission/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
-      else
-        command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
-      end
+       end
 
       memory_specification = 536870912
       if langcode == 'java'
         memory_specification = 1677721600
       end
-      # puts 'container create'
-      container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
-       # puts 'container created'
 
+      seccomp_profile = File.read("#{CONFIG[:base_path]}/profile.json")
+
+      if langcode == 'java'
+        container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true)
+      elsif langcode == 'python'
+        container = Docker::Container.create('Cmd' => ["/usr/bin/python","submission/user_source_code#{file_extensions[langcode]}"],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => memory_specification, 'HostConfig':{'SecurityOpt': ["seccomp:#{seccomp_profile}"]})
+      else
+        container = Docker::Container.create('Cmd' => ["/submission/compiled_code"],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => memory_specification, 'HostConfig':{'SecurityOpt': ["seccomp:#{seccomp_profile}"]})
+      end
+         # puts 'container created'
       container_id = container.json["Id"]
 
-      time_start = Time.now()
-
       container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
+
+
+      if langcode != 'java'
+        test = File.read("#{@test_case_path}#{test_case[:name]}") 
+        container.attach(:stream => true,stdin: StringIO.new(test), :logs => true, :tty => false)
+      end
       keep_running_flag = true
 
-      # puts "came here\n\n"
+       # puts "came here\n\n"
 
       while container.json["State"]["Running"]
         begin
@@ -122,7 +129,8 @@ class ProcessSubmission
               if submission.nil?
                 return
               end
-              submission.update_attributes!( status_code: error_flag, error_description: error_flag )
+              docker_stderr = container.streaming_logs(stderr: true)
+              submission.update_attributes!( status_code: error_flag, error_description: docker_stderr )
               return
             rescue Errno::ESRCH => e
               break
@@ -130,6 +138,19 @@ class ProcessSubmission
           end
         rescue
         end
+      end
+
+      begin
+        container = Docker::Container.get(container_id)
+        if langcode != 'java'
+          user_output = File.open("#{@submission_path}#{test_case[:name]}","w")
+          # puts container.streaming_logs(stdout: true)
+          # puts docker_stderr
+          docker_stdout_output = container.streaming_logs(stdout: true)
+          user_output.write(docker_stdout_output)
+          user_output.close
+        end
+      rescue
       end
 
       if error_flag.nil?
@@ -176,6 +197,7 @@ class ProcessSubmission
           end
 		  		return
 		  	end
+
 	  		if !check_solution_through_diff(test_case)
 	  			submission.update_attributes!( status_code: "WA", error_description: "WA" )
           begin
@@ -186,7 +208,6 @@ class ProcessSubmission
           return
 	  		end
 	  	end
-
   	end
 
   	submission = get_submission(submission_id)
