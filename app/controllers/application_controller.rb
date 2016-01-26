@@ -186,35 +186,10 @@ class ApplicationController < ActionController::Base
     @title = "Submissions"
     @main_content_page = true
     @submissions_page = true
-    @contest_code = params[:ccode]
-    @problem_code = params[:pcode]
-    @user_id = params[:user_id]
-    query_params = {}
-    unless @user_id.nil?
-      @user = User.where(id: @user_id).first
-      if @user.nil?
-        render 'error/error_404' and return
-      end
-      query_params[:user_id] = @user_id
-    end
-    unless @contest_code.nil?
-      contest = Contest.where(ccode: @contest_code).first
-      if contest.nil?
-        render 'error/error_404' and return
-      end
-      if @problem_code.nil?
-        problems = contest.problems
-        problem_ids = problems.to_a.map { |problem| problem[:_id] }
-        query_params[:problem_id.in] = problem_ids
-      else
-        problem = Problem.where(pcode: @problem_code).first
-        if problem.nil?
-          render 'error/error_404' and return
-        end
-        query_params[:problem_id] = problem.id.to_s
-      end
-    end
-    @submissions = Submission.where(query_params).order_by(submission_time: -1).page(params[:page]).per(30)
+
+    process_submission_params(params)
+
+    @submissions = Submission.where(@query_params).order_by(submission_time: -1).page(params[:page]).per(30)
     @submission_authorize_flag = @submissions.all? { |submission| can?(:update, submission) }
     @users = []
     @problems = []
@@ -224,6 +199,37 @@ class ApplicationController < ActionController::Base
       @users << { name: user[:full_name], college: user[:college], username: user[:username], id: user[:id] }
       @problems << submission.problem[:pcode]
       @contest_codes << submission.problem.contest[:ccode]
+    end
+  end
+
+  def process_submission_params(params)
+    @contest_code = params[:ccode]
+    @problem_code = params[:pcode]
+    @user_id = params[:user_id]
+    @query_params = {}
+    unless @user_id.nil?
+      @user = User.where(id: @user_id).first
+      if @user.nil?
+        render 'error/error_404' and return
+      end
+      @query_params[:user_id] = @user_id
+    end
+    unless @contest_code.nil?
+      contest = Contest.where(ccode: @contest_code).first
+      if contest.nil?
+        render 'error/error_404' and return
+      end
+      if @problem_code.nil?
+        problems = contest.problems
+        problem_ids = problems.to_a.map { |problem| problem[:_id] }
+        @query_params[:problem_id.in] = problem_ids
+      else
+        problem = Problem.where(pcode: @problem_code).first
+        if problem.nil?
+          render 'error/error_404' and return
+        end
+        @query_params[:problem_id] = problem.id.to_s
+      end
     end
   end
 
@@ -250,6 +256,22 @@ class ApplicationController < ActionController::Base
         ProcessSubmission.perform_async({ submission_id: submission[:_id].to_s })
     else
       render 'error/error_404' and return
+    end
+    render :nothing => true
+  end
+
+  def rejudge_multiple
+    # submission_ids = params[:submission_ids].map!(&:to_s).reject!(&:blank?)
+    # if submission_ids.length == 0
+      process_submission_params(params)
+      @submissions = Submission.where(@query_params)
+    # else
+    #   @submissions = Submission.where(:_id.in => submission_ids)
+    # end
+    @submission_authorize_flag = @submissions.all? { |submission| can?(:update, submission) }
+    if @submission_authorize_flag
+      submission_ids = @submissions.pluck(:id).collect(&:to_s)
+      RejudgeSubmission.perform_async(submission_ids)
     end
     render :nothing => true
   end

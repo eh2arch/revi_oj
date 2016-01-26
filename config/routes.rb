@@ -30,6 +30,12 @@ CodecrackerV4::Application.routes.draw do
     get 'submissions/contest/:ccode/problem/:pcode/user/:user_id' => :submissions
     get 'get_submission_data' => :get_submission_data
     get 'rejudge' => :rejudge
+    get 'rejudge_multiple' => :rejudge_multiple
+    get 'rejudge_multiple/contest/:ccode' => :rejudge_multiple
+    get 'rejudge_multiple/contest/:ccode/problem/:pcode' => :rejudge_multiple
+    get 'rejudge_multiple/user/:user_id' => :rejudge_multiple
+    get 'rejudge_multiple/contest/:ccode/user/:user_id' => :rejudge_multiple
+    get 'rejudge_multiple/contest/:ccode/problem/:pcode/user/:user_id' => :rejudge_multiple
     get 'view_submission/:id' => :view_submission
     get 'view_submission_details/:id' => :view_submission_details
   end

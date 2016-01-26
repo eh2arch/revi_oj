@@ -59,27 +59,41 @@ $(document).ready(function() {
         });
     }
 
-    function rejudge_submission_single(elements) {
+    function rejudge_submission_single(elements, callback) {
         var img_attr = "load.gif";
         for (var i=0; i < $(elements).length; i++) {
             var element = elements[i];
             $(element).children().remove();
             $(element).append(" <img src='/assets/" + img_attr + "' height='24' width='24' /> ");
             var submission = $(element).attr('data-submission-id');
-            rejudge_submission_call(element, submission);
+            callback(element, submission);
         }
     }
     $(".rejudge_submission").click(function(){
         var submission = $(this).attr('data-submission-id');
         var element = $("td.submission_img[data-submission-id="+submission+"]");
-        rejudge_submission_single(element);
+        rejudge_submission_single(element, rejudge_submission_call);
     });
 
-     $(".rejudge_page").click(function(){
+    $(".rejudge_page").click(function(){
         var elements = $("td.submission_img[data-submission-id]");
-        rejudge_submission_single(elements);
+        rejudge_submission_single(elements, rejudge_submission_call);
     });
 
+    $('.rejudge_all').click(function(){
+        $.ajax({
+            url: '/rejudge_multiple/' + window.location.pathname.split('/').slice(2, window.location.pathname.split('/').length).join('/'),
+            type: 'GET',
+            success: function()
+            {
+                var elements = $("td.submission_img[data-submission-id]");
+                rejudge_submission_single(elements, (function(element, submission_id){
+                    $(element).siblings('.rejudge_submission').find('img').hide('slow');
+                    get_submission_data(element, submission_id);
+                }));
+            }
+        })
+    });
 
     function rejudge_submission_call(element, submission_id) {
         $(element).siblings('.rejudge_submission').find('img').hide('slow');
