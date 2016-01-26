@@ -82,10 +82,11 @@ class ProcessSubmission
 
       container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
 
+      time_start = Time.now()
 
       if langcode != 'java'
-        test = File.read("#{@test_case_path}#{test_case[:name]}") 
-        container.attach(:stream => true,stdin: StringIO.new(test), :logs => true, :tty => false)
+        test = File.read("#{@test_case_path}#{test_case[:name]}")
+        container.attach(:stream => true, stdin: StringIO.new(test), :logs => true, :tty => false)
       end
       keep_running_flag = true
 
