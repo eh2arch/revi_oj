@@ -8,23 +8,23 @@ class ProcessSubmission
   #Docker::API_VERSION = '1.11.2'
 
   def perform(args)
-  	file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
-  	submission_id = args["submission_id"]
-  	submission = get_submission(submission_id)
-  	if submission.nil?
-  		return
-  	end
-  	langcode = submission.language[:langcode]
-  	user_email = submission.user[:email]
-  	problem = submission.problem
-  	pcode = problem[:pcode]
-  	ccode = problem.contest[:ccode]
-  	tlimit = problem[:time_limit] * submission.language[:time_multiplier]
-  	mlimit = problem[:memory_limit]
-  	@submission_path = "#{CONFIG[:base_path]}/#{user_email}/#{ccode}/#{pcode}/#{submission_id}/"
+    file_extensions = { 'c++' => '.cpp', 'java' => '.java', 'python' => '.py', 'c' => '.cc' }
+    submission_id = args["submission_id"]
+    submission = get_submission(submission_id)
+    if submission.nil?
+      return
+    end
+    langcode = submission.language[:langcode]
+    user_email = submission.user[:email]
+    problem = submission.problem
+    pcode = problem[:pcode]
+    ccode = problem.contest[:ccode]
+    tlimit = problem[:time_limit] * submission.language[:time_multiplier]
+    mlimit = problem[:memory_limit]
+    @submission_path = "#{CONFIG[:base_path]}/#{user_email}/#{ccode}/#{pcode}/#{submission_id}/"
 
-  	if langcode == 'c++'
-  		compile_path = "bash -c 'g++ -std=c++0x -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
+    if langcode == 'c++'
+      compile_path = "bash -c 'g++ -std=c++0x -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
     elsif langcode == 'c'
       compile_path = "bash -c 'gcc -std=gnu99 -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
     elsif langcode == 'java'
@@ -57,72 +57,59 @@ class ProcessSubmission
     total_running_time = 0
 
     test_cases.each_with_index do |test_case, index|
-      # puts index + 1
 
-      if langcode == 'java'
+      if langcode == 'python'
+        command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
+      elsif langcode == 'java'
         command = "java -cp /submission/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
-       end
+      else
+        command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
+      end
 
       memory_specification = 536870912
       if langcode == 'java'
         memory_specification = 1677721600
       end
+      container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => 536870912)
 
-      seccomp_profile = File.read("#{CONFIG[:base_path]}/profile.json")
-
-      if langcode == 'java'
-        container = Docker::Container.create('Cmd' => ["bash", "-c", command],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true)
-      elsif langcode == 'python'
-        container = Docker::Container.create('Cmd' => ["/usr/bin/python","submission/user_source_code#{file_extensions[langcode]}"],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => memory_specification, 'HostConfig':{'SecurityOpt': ["seccomp:#{seccomp_profile}"]})
-      else
-        container = Docker::Container.create('Cmd' => ["/submission/compiled_code"],'Image' => 'archit/codecracker', 'Volumes' => {"/submission" => {}, "/testcase" => {}}, 'NetworkDisabled' => true, 'Memory' => memory_specification, 'HostConfig':{'SecurityOpt': ["seccomp:#{seccomp_profile}"]})
-      end
-         # puts 'container created'
       container_id = container.json["Id"]
-
-      container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
 
       time_start = Time.now()
 
-      if langcode != 'java'
-        test = File.read("#{@test_case_path}#{test_case[:name]}")
-        container.attach(:stream => true, stdin: StringIO.new(test), :logs => true, :tty => false)
-      end
+      container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
       keep_running_flag = true
 
-       # puts "came here\n\n"
 
       while container.json["State"]["Running"]
         begin
           if container.top.length < 2 then
             next
-          end
+          elsif container.top.length > 2
+            error_flag = 'RTE'
+          else         
+            pid = container.top[1]["PID"].to_i
+            pid_new = status = max_memory_used = 0
+            error_flag = nil
 
-          pid = container.top[1]["PID"].to_i
-          pid_new = status = max_memory_used = 0
-          error_flag = nil
+            begin
+              memory_used = get_memory_usage(pid)
+            rescue
+              memory_used = 0
+            end
+            max_memory_used = [max_memory_used, memory_used].max
 
-          begin
-            memory_used = get_memory_usage(pid)
-          rescue
-            memory_used = 0
-          end
-          max_memory_used = [max_memory_used, memory_used].max
-          # puts max_memory_used.to_s + " memory used"
-          if langcode != 'java' && max_memory_used > mlimit
-            # puts 'came to memory shit'
-            error_flag = 'MLE'
-          elsif container.json["State"]["Running"] && Time.now() - DateTime.parse(container.json["State"]["StartedAt"]).to_time > tlimit
-            # puts 'tle'
-            error_flag = 'TLE'
+            if langcode != 'java' && max_memory_used > mlimit
+              error_flag = 'MLE'
+            elsif container.json["State"]["Running"] && Time.now() - DateTime.parse(container.json["State"]["StartedAt"]).to_time > tlimit
+              error_flag = 'TLE'
+            end
           end
           unless error_flag.nil?
             begin
               begin
                 container = Docker::Container.get(container_id)
-                # puts 'kill st'
-                container.kill
-                # puts 'kill end'
+                # container.kill
+                container.delete(:force => true)
               rescue
                 Process.kill('KILL', pid)
               end
@@ -130,8 +117,7 @@ class ProcessSubmission
               if submission.nil?
                 return
               end
-              docker_stderr = container.streaming_logs(stderr: true)
-              submission.update_attributes!( status_code: error_flag, error_description: docker_stderr )
+              submission.update_attributes!( status_code: error_flag, error_description: error_flag )
               return
             rescue Errno::ESRCH => e
               break
@@ -140,20 +126,6 @@ class ProcessSubmission
         rescue
         end
       end
-
-      begin
-        container = Docker::Container.get(container_id)
-        if langcode != 'java'
-          user_output = File.open("#{@submission_path}#{test_case[:name]}","w")
-          # puts container.streaming_logs(stdout: true)
-          # puts docker_stderr
-          docker_stdout_output = container.streaming_logs(stdout: true)
-          user_output.write(docker_stdout_output)
-          user_output.close
-        end
-      rescue
-      end
-
       if error_flag.nil?
         begin
           container = Docker::Container.get(container_id)
@@ -188,59 +160,57 @@ class ProcessSubmission
         end
       end
 
-	  	unless test_case[:checker_is_a_code]
-		  	submission = get_submission(submission_id)
-		  	if submission.nil?
-          begin
-              container = Docker::Container.get(container_id)
-              container.delete(:force => true)
-          rescue
-          end
-		  		return
-		  	end
-
-	  		if !check_solution_through_diff(test_case)
-	  			submission.update_attributes!( status_code: "WA", error_description: "WA" )
+      unless test_case[:checker_is_a_code]
+        submission = get_submission(submission_id)
+        if submission.nil?
           begin
               container = Docker::Container.get(container_id)
               container.delete(:force => true)
           rescue
           end
           return
-	  		end
-	  	end
-  	end
+        end
+        if !check_solution_through_diff(test_case)
+          submission.update_attributes!( status_code: "WA", error_description: "WA" )
+          begin
+              container = Docker::Container.get(container_id)
+              container.delete(:force => true)
+          rescue
+          end
+          return
+        end
+      end
+    end
 
-  	submission = get_submission(submission_id)
-  	if submission.nil?
-  		return
-  	end
-  	submission.update_attributes!( status_code: 'AC', running_time: total_running_time )
+    submission = get_submission(submission_id)
+    if submission.nil?
+      return
+    end
+    submission.update_attributes!( status_code: 'AC', running_time: total_running_time )
 
   end
 
   def get_memory_usage(pid)
-  	proc_path = "/proc/#{pid}/status"
-  	file_read = File.read(proc_path)
-  	data = stack = 0
-  	file_read.each_line do |line|
-	  	vmDataInd = line.index("VmData:")
-	  	vmStkInd = line.index("VmStk:")
-	  	unless vmDataInd.nil?
-	  		data = line.scanf("VmData%*s %d")[0]
-	  	end
-	  	unless vmStkInd.nil?
-	  		stack = line.scanf("VmStk%*s %d")[0]
-	  	end
-		end
-		return data + stack
+    proc_path = "/proc/#{pid}/status"
+    file_read = File.read(proc_path)
+    data = stack = 0
+    file_read.each_line do |line|
+      vmDataInd = line.index("VmData:")
+      vmStkInd = line.index("VmStk:")
+      unless vmDataInd.nil?
+        data = line.scanf("VmData%*s %d")[0]
+      end
+      unless vmStkInd.nil?
+        stack = line.scanf("VmStk%*s %d")[0]
+      end
+    end
+    return data + stack
   end
 
   def check_solution_through_diff(test_case)
     user_solution_path = @submission_path + test_case[:name]
     test_case_solution_path = @test_case_output_path + test_case[:name]
     diff = %x(diff -ZbB #{user_solution_path} #{test_case_solution_path})
-    # puts diff
     if diff.length > 0
       return false
     end
@@ -248,35 +218,35 @@ class ProcessSubmission
   end
 
   def check_solution(test_case)
-  	user_solution_path = @submission_path + test_case[:name]
-  	test_case_solution_path = @test_case_output_path + test_case[:name]
-  	begin
-	  	user_solution = File.read(user_solution_path)
-	  	test_case_solution = File.read(test_case_solution_path)
-  	rescue
-  		return false
-  	end
-  	test_case_solution.lines.each_with_index do |test_line, index|
-  		test_token_array = test_line.strip.split()
-  		begin
-  			user_token_array = user_solution.lines[index].strip.split()
-  		rescue
-  			return false
-  		end
-  		if test_token_array != user_token_array
-  			return false
-  		end
-  	end
+    user_solution_path = @submission_path + test_case[:name]
+    test_case_solution_path = @test_case_output_path + test_case[:name]
+    begin
+      user_solution = File.read(user_solution_path)
+      test_case_solution = File.read(test_case_solution_path)
+    rescue
+      return false
+    end
+    test_case_solution.lines.each_with_index do |test_line, index|
+      test_token_array = test_line.strip.split()
+      begin
+        user_token_array = user_solution.lines[index].strip.split()
+      rescue
+        return false
+      end
+      if test_token_array != user_token_array
+        return false
+      end
+    end
 
-  	return true
+    return true
   end
 
   def get_submission(submission_id)
-  	submission = Submission.where(_id: submission_id.to_s).first
-  	if submission.nil? || submission[:status_code] != "PE"
-  		return nil
-  	end
-  	return submission
+    submission = Submission.where(_id: submission_id.to_s).first
+    if submission.nil? || submission[:status_code] != "PE"
+      return nil
+    end
+    return submission
   end
 
 end
