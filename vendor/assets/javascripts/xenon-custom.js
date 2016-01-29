@@ -1,7 +1,8 @@
 var public_vars=public_vars||{};;(function($,window,undefined){"use strict";$(document).ready(function()
 {public_vars.$body=$("body");public_vars.$pageContainer=public_vars.$body.find(".page-container");public_vars.$chat=public_vars.$pageContainer.find("#chat");public_vars.$sidebarMenu=public_vars.$pageContainer.find('.sidebar-menu');public_vars.$sidebarProfile=public_vars.$sidebarMenu.find('.sidebar-user-info');public_vars.$mainMenu=public_vars.$sidebarMenu.find('.main-menu');public_vars.$horizontalNavbar=public_vars.$body.find('.navbar.horizontal-menu');public_vars.$horizontalMenu=public_vars.$horizontalNavbar.find('.navbar-nav');public_vars.$mainContent=public_vars.$pageContainer.find('.main-content');public_vars.$mainFooter=public_vars.$body.find('footer.main-footer');public_vars.$userInfoMenuHor=public_vars.$body.find('.navbar.horizontal-menu');public_vars.$userInfoMenu=public_vars.$body.find('nav.navbar.user-info-navbar');public_vars.$settingsPane=public_vars.$body.find('.settings-pane');public_vars.$settingsPaneIn=public_vars.$settingsPane.find('.settings-pane-inner');public_vars.wheelPropagation=true;public_vars.$pageLoadingOverlay=public_vars.$body.find('.page-loading-overlay');public_vars.defaultColorsPalette=['#68b828','#7c38bc','#0e62c7','#fcd036','#4fcdfc','#00b19d','#ff6264','#f7aa47'];if(public_vars.$pageLoadingOverlay.length)
-{$(window).load(function()
-{public_vars.$pageLoadingOverlay.addClass('loaded');});}
+{
+// $(window).load(function(){public_vars.$pageLoadingOverlay.addClass('loaded');});
+}
 window.onerror=function()
 {public_vars.$pageLoadingOverlay.addClass('loaded');}
 setup_sidebar_menu();//

@@ -26,43 +26,8 @@
 			<%= stylesheet_link_tag "datatables/dataTables.bootstrap.css" %>
 			<%= stylesheet_link_tag "custom-table.css" %>
 		<% end %>
-		<% if @home_page || @contest_page || @problem_page || @scoreboard_page || @submissions_page %>
-			<%= javascript_include_tag "datatables/js/jquery.dataTables.min.js" %>
-			<%= javascript_include_tag "datatables/dataTables.bootstrap.js" %>
-			<%= javascript_include_tag "datatables/yadcf/jquery.dataTables.yadcf.js" %>
-			<%= javascript_include_tag "datatables/tabletools/dataTables.tableTools.min.js" %>
-			<%= javascript_include_tag "jquery.timeago.js" %>
-			<%= javascript_include_tag "jquery-ui/jquery-ui.min.js" %>
-			<%= javascript_include_tag "selectboxit/jquery.selectBoxIt.min.js" %>
-			<script>
-				jQuery(document).ready(function() {
-				  jQuery.timeago.settings.allowFuture = true;
-				  jQuery(".timeago").timeago();
-				  var opts = {
-					"closeButton": true,
-					"debug": false,
-					"positionClass": "toast-top-right",
-					"onclick": null,
-					"showDuration": "300",
-					"hideDuration": "1000",
-					"timeOut": "5000",
-					"extendedTimeOut": "1000",
-					"showEasing": "swing",
-					"hideEasing": "linear",
-					"showMethod": "fadeIn",
-					"hideMethod": "fadeOut"
-					};
-				  <% if @notif_quick_submit %>
-						toastr.error("You're only allowed to make one submission in 30 seconds. Please try after some time", "Submission Error", opts);
-				  <% elsif @notif_source_limit_exceed %>
-				  		toastr.error("Your submission exceeds the source code limit. Please check the rules for more details", "Source Limit Error", opts);
-				  <% elsif @notif_submission_success %>
-					  toastr.success("Source code submitted successfully. Please check the submissions page for the status", "Success", opts);
-				  <% elsif flash[:alert] %>
-				  		toastr.error("<%=flash[:alert]%>", "Error!", opts);
-				  <% end %>
-				});
-			</script>
-		<% end %>
+
+		<%= render 'layouts/scripts' %>
+
 	</body>
 </html>
