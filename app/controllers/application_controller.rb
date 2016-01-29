@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
     @current_user_arr = {}
     @problems = contest.problems.only(:_id, :pcode, :name)
     contest_users.each do |user|
-      user_hash = { email: user[:email], college: user[:college], username: user[:username] }
+      user_hash = { email: user[:email], college: user[:college], username: user[:username], id: user[:_id] }
       problem_array = []
       total_time = @contest_start_time
       total_success = 0

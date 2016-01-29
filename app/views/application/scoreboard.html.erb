@@ -50,14 +50,16 @@
                                                                     <%=index + 1%>
                                                                 </td>
                                                                 <td class="text-primary">
-                                                                    <strong style="font-size:1.2em;"><%=user[:username]%></strong>
-                                                                    <span>
+                                                                    <strong style="font-size:1.2em;">
+                                                                        <%= link_to user[:username], "/submissions/user/#{user[:id]}" %>
+                                                                    </strong>
+<!--                                                                     <span>
                                                                         <i>
-                                                                        <%=user[:college]%>
+                                                                        <%#=user[:college]%>
                                                                          <%#=user[:email]%>
                                                                         </i>
                                                                     </span>
-                                                                </td>
+ -->                                                                </td>
                                                                 <% user[:problems].each do |problem| %>
                                                                     <% if problem[:success] %>
                                                                         <td class="text-primary" style="background-color:rgb(12, 206, 154);color:#fff;">
