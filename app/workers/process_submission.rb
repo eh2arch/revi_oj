@@ -21,7 +21,8 @@ class ProcessSubmission
     ccode = problem.contest[:ccode]
     tlimit = problem[:time_limit] * submission.language[:time_multiplier]
     mlimit = problem[:memory_limit]
-    @submission_path = "#{CONFIG[:base_path]}/#{user_email}/#{ccode}/#{pcode}/#{submission_id}/"
+
+    @user_compile_path = "#{CONFIG[:base_path]}/#{user_email}/#{ccode}/#{pcode}/#{submission_id}/"
 
     if langcode == 'c++'
       compile_path = "bash -c 'g++ -std=c++0x -w -O2 -fomit-frame-pointer -lm -o ./compiled_code ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
@@ -32,12 +33,12 @@ class ProcessSubmission
     elsif langcode == 'python'
       compile_path = "bash -c 'python -m py_compile ./user_source_code#{file_extensions[langcode]} >& ./compiler'"
     end
-    pid = spawn(compile_path, :chdir => @submission_path)
+    pid = spawn(compile_path, :chdir => @user_compile_path)
     pid, status = wait2(pid, 0)
     if !status.exited? || status.exitstatus.to_i != 0
       compilation_error = nil
       begin
-        compilation_error = File.read(@submission_path + "compiler")
+        compilation_error = File.read(@user_compile_path + "compiler")
       rescue
         compilation_error = "Unknown error"
       end
@@ -51,19 +52,22 @@ class ProcessSubmission
     signal_list.merge!(signal_list_new)
 
     test_cases = problem.test_cases
-    @test_case_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/"
-    @test_case_output_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/"
 
     total_running_time = 0
 
     test_cases.each_with_index do |test_case, index|
 
+      @test_case_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/#{test_case[:name]}/"
+      @test_case_output_path = "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/#{test_case[:name]}/"
+      source_path = @user_compile_path
+      @submission_path = @user_compile_path + "#{test_case[:name]}/"
+
       if langcode == 'python'
-        command = "python /submission/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
+        command = "python /source/user_source_code#{file_extensions[langcode]} < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       elsif langcode == 'java'
-        command = "java -cp /submission/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
+        command = "java -cp /source/ Main < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       else
-        command = "/submission/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
+        command = "/source/compiled_code < /testcase/#{test_case[:name]} > /submission/#{test_case[:name]}"
       end
 
       memory_specification = 536870912
@@ -76,7 +80,7 @@ class ProcessSubmission
 
       time_start = Time.now()
 
-      container.start("Binds"=> [ "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
+      container.start("Binds"=> [ "#{source_path}:/source:rw", "#{@submission_path}:/submission:rw", "#{@test_case_path}:/testcase:ro" ])
       keep_running_flag = true
 
 
@@ -86,7 +90,7 @@ class ProcessSubmission
             next
           elsif container.top.length > 2
             error_flag = 'RTE'
-          else         
+          else
             pid = container.top[1]["PID"].to_i
             pid_new = status = max_memory_used = 0
             error_flag = nil

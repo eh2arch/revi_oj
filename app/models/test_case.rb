@@ -23,14 +23,20 @@ class TestCase
       contest = problem.contest
       ccode = contest[:ccode]
       pcode = problem[:pcode]
-      test_case = File.open("#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/#{self[:name]}", 'w')
+      system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/#{self[:name]}"
+      test_case = File.open("#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/#{self[:name]}/#{self[:name]}", 'w')
       test_case.write(Paperclip.io_adapters.for(self.test_case).read)
       test_case.close
-      test_case_output = File.open("#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/#{self[:name]}", 'w')
+      system 'mkdir', '-p', "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/#{self[:name]}"
+      test_case_output = File.open("#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/#{self[:name]}/#{self[:name]}", 'w')
       test_case_output.write(Paperclip.io_adapters.for(self.test_case_output).read)
       test_case_output.close
-      self[:test_case] = ""
-      self[:test_case_output] = ""
+      problem.submissions.each do |submission|
+        user = submission.user
+        email = submission.user[:email]
+        submission_id = submission[:_id]
+        system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/#{self[:name]}"
+      end
       return true
     end
 
@@ -41,6 +47,12 @@ class TestCase
       pcode = problem[:pcode]
       system 'rm', '-rf', "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_cases/#{self[:name]}"
       system 'rm', '-rf', "#{CONFIG[:base_path]}/contests/#{ccode}/#{pcode}/test_case_outputs/#{self[:name]}"
+      problem.submissions.each do |submission|
+        user = submission.user
+        email = submission.user[:email]
+        submission_id = submission[:_id]
+        system 'rm', '-rf', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/#{self[:name]}"
+      end
       return true
     end
 end

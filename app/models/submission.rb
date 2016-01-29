@@ -41,6 +41,9 @@ class Submission
     end
   	input.write(self[:user_source_code])
   	input.close
+    problem.test_cases.each do |test_case|
+      system 'mkdir', '-p', "#{CONFIG[:base_path]}/#{email}/#{ccode}/#{pcode}/#{submission_id}/#{test_case[:name]}"
+    end
   	return true
   end
 
