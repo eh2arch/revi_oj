@@ -113,7 +113,7 @@ class ProcessSubmission
               begin
                 container = Docker::Container.get(container_id)
                 # container.kill
-                container.delete(:force => true)
+                container.delete(force: true)
               rescue
                 Process.kill('KILL', pid)
               end
@@ -144,7 +144,7 @@ class ProcessSubmission
             if submission.nil?
               begin
                   container = Docker::Container.get(container_id)
-                  container.delete(:force => true)
+                  container.delete(force: true)
               rescue
               end
               return
@@ -169,7 +169,7 @@ class ProcessSubmission
         if submission.nil?
           begin
               container = Docker::Container.get(container_id)
-              container.delete(:force => true)
+              container.delete(force: true)
           rescue
           end
           return
@@ -178,12 +178,19 @@ class ProcessSubmission
           submission.update_attributes!( status_code: "WA", error_description: "WA" )
           begin
               container = Docker::Container.get(container_id)
-              container.delete(:force => true)
+              container.delete(force: true)
           rescue
           end
           return
         end
       end
+
+      begin
+        container = Docker::Container.get(container_id)
+        container.delete(force: true)
+      rescue
+      end
+
     end
 
     submission = get_submission(submission_id)
@@ -191,7 +198,6 @@ class ProcessSubmission
       return
     end
     submission.update_attributes!( status_code: 'AC', running_time: total_running_time )
-
   end
 
   def get_memory_usage(pid)
