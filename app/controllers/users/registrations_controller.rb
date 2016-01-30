@@ -2,18 +2,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters
   respond_to :html, :json
 
-  # def create
-  #   # if verify_recaptcha
-  #   #   flash.now[:notice] = "We've sent an email to you with confirmation instructions. Please check your email to proceed with the login"
-  #   #   super
-  #   # else
-  #   #   build_resource(sign_up_params)
-  #   #   clean_up_passwords(resource)
-  #   #   flash.now[:alert] = "There was an error with the recaptcha code below. Please re-enter the code."
-  #   #   flash.delete :recaptcha_error
-  #   #   render :new
-  #   # end
-  # end
+  def create
+    if verify_recaptcha
+      flash.now[:notice] = "We've sent an email to you with confirmation instructions. Please check your email to proceed with the login"
+      super
+    else
+      build_resource(sign_up_params)
+      clean_up_passwords(resource)
+      flash.now[:alert] = "There was an error with the recaptcha code below. Please re-enter the code."
+      flash.delete :recaptcha_error
+      render :new
+    end
+  end
 
   protected
 
