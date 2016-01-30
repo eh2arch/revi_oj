@@ -221,7 +221,7 @@ class ProcessSubmission
     user_solution_path = @submission_path + test_case[:name]
     test_case_solution_path = @test_case_output_path + test_case[:name]
     diff = %x(diff -ZbB #{user_solution_path} #{test_case_solution_path})
-    if diff.length > 0
+    if $?.exitstatus.to_i != 0 || diff.length > 0
       return false
     end
     return true
