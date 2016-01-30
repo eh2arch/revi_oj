@@ -83,10 +83,10 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_submission
-    user_source_code = params["user_source_code"]
-    language = params["language"]
-    problem_code = params["pcode"]
-    contest_code = params["ccode"]
+    user_source_code = params[:user_source_code]
+    language = params[:language]
+    problem_code = params[:pcode]
+    contest_code = params[:ccode]
     language_document = Language.where(name: language).first
     if language_document.nil?
       render 'error/error_404' and return

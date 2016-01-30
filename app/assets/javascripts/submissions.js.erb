@@ -13,7 +13,7 @@ $(document).ready(function() {
                 }, 3000);
               }
               else {
-                var img_attr = null, tooltip = '', status_description = submission_data['description'];
+                var img_url = null, tooltip = '', status_description = submission_data['description'];
                 if(submission_data['status_code'] == 'AC'){
                     img_url = "<%= asset_path 'tick.png' %>";
                     tooltip = 'Correct Answer:' + submission_data['running_time'];
