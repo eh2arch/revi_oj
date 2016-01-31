@@ -76,9 +76,9 @@ class ApplicationController < ActionController::Base
     @language_langcodes = get_language_parameter(problem, 'langcode')
     @creator_name = problem.creator.user[:full_name]
     @creator_username = problem.creator.user[:username]
+    @creator_id = problem.creator.user[:_id]
     @problem_created_at = problem[:created_at]
-    link = view_context.link_to(@creator_name, { action: 'users', username: @creator_username }, class: "text-info")
-    @description = 'Created <span class="timeago text-primary" title="' + problem[:created_at].to_time.iso8601.to_s + '"></span> by ' + link
+    @description = "Created <span class='timeago text-primary' title='" + problem[:created_at].to_time.iso8601.to_s + "'></span> by <a class='text-info' href='/submissions/user/#{@creator_id}'>#{@creator_name}</a>"
     @description = @description.html_safe
   end
 
